@@ -185,7 +185,7 @@ public class ResultActivity extends AppCompatActivity {
 
     public void setData() {
         //Text
-        String string_builder = name + " " + score + " %";
+        String string_builder = name + " = " + score + " %";
         mTItle.setText(string_builder);
         mDescription.setText(desc);
         //Image
