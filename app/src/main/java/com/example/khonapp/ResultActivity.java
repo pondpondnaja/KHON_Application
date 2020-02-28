@@ -47,7 +47,7 @@ public class ResultActivity extends AppCompatActivity {
     //private static final String URL = "http://10.70.1.61:5000/connectFromAndroid";
     private static final String URL = "http://192.168.64.2/3D/testscript.php";
     //private static final String URL = "http://khon.itar.site/application";
-    private String img_path, img_real_path, previewPath, name, desc, score;
+    private String img_path, img_real_path, previewPath, name, desc, score, gesture;
 
     private TextView mTItle, mDescription;
     private ImageView mImage;
@@ -171,6 +171,7 @@ public class ResultActivity extends AppCompatActivity {
             name = jsonObject.getString("character_thai").replace("[", "").replace("]", "").replace("\"", "");
             desc = jsonObject.getString("desc").replace("[", "").replace("]", "").replace("\"", "");
             score = jsonObject.getString("score").replace("[", "").replace("]", "");
+            gesture = jsonObject.getString("gesture_name").replace("[", "").replace("]", "").replace("\"", "");
 
             Log.d(TAG, "initData: Character : " + name + " Score : " + score + " %");
             Log.d(TAG, "initData: Description : " + desc);
