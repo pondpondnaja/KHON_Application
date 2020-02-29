@@ -29,7 +29,9 @@ public class Full_NewListFragment extends Fragment {
     private static final String TAG = "FN";
     //private static final String URL = "http://192.168.64.2/3D/news.php";
     //private static final String URL = "https://utg-fansub.me/3D/news.php";
-    private static final String URL = "http://192.168.1.43:5000/androidNews";
+    //private static final String URL = "http://192.168.1.43:5000/androidNews";
+    //Real connection
+    private static final String URL = "http://khon.itar.site/androidNews";
 
     private ArrayList<String> mName = new ArrayList<>();
     private ArrayList<String> mImageURL = new ArrayList<>();

@@ -25,11 +25,18 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -45,13 +52,14 @@ public class ResultActivity extends AppCompatActivity {
     private static final int PERMISSION_CODE = 1000;
     private static final String TAG = "cameraResult";
     //private static final String URL = "http://10.70.1.61:5000/connectFromAndroid";
-    private static final String URL = "http://192.168.64.2/3D/testscript.php";
-    //private static final String URL = "http://khon.itar.site/application";
-    private String img_path, img_real_path, previewPath, name, desc, score, gesture;
+    //private static final String URL = "http://192.168.64.2/3D/testscript.php";
+    //Real connection
+    private static final String URL = "http://khon.itar.site/application";
+    private String img_path, img_real_path, previewPath, name, desc, score, gesture_name, gesture_score, gestureDesc, out_image, model_id;
 
-    private TextView mTItle, mDescription;
+    private TextView mTItle, mDescription, mGesture, mGestureDescription;
     private ImageView mImage;
-    private ProgressBar progressBar;
+    private ProgressBar progressBar, progressBar_cha, progressBar_gesture;
 
     Uri img_address;
 
@@ -68,11 +76,27 @@ public class ResultActivity extends AppCompatActivity {
         }
 
         progressBar = findViewById(R.id.progressBar);
+        progressBar_cha = findViewById(R.id.progressBar_cha);
+        progressBar_gesture = findViewById(R.id.progressBar_gesture);
         mTItle = findViewById(R.id.result_title);
         mDescription = findViewById(R.id.result_description);
         mImage = findViewById(R.id.preview_img);
+        mGesture = findViewById(R.id.resultGesture_title);
+        mGestureDescription = findViewById(R.id.resultGesture_description);
 
         if (savedInstanceState == null) {
+            progressBar.setVisibility(View.VISIBLE);
+            progressBar_cha.setVisibility(View.VISIBLE);
+            progressBar_gesture.setVisibility(View.VISIBLE);
+
+            mTItle.setText("");
+            mDescription.setText("");
+            mGesture.setText("");
+            mGestureDescription.setText("");
+            progressBar.bringToFront();
+            progressBar_cha.bringToFront();
+            progressBar_gesture.bringToFront();
+
             Bundle extra = getIntent().getExtras();
             if (extra == null) {
                 img_path = null;
@@ -80,7 +104,7 @@ public class ResultActivity extends AppCompatActivity {
                 img_path = extra.getString("img_path");
                 img_address = Uri.parse(img_path);
                 img_real_path = getPath(ResultActivity.this, img_address);
-                progressBar.setVisibility(View.GONE);
+                //progressBar.setVisibility(View.GONE);
                 //setData();
 
                 connectServer();
@@ -117,8 +141,8 @@ public class ResultActivity extends AppCompatActivity {
 
         OkHttpClient client = new OkHttpClient();
         OkHttpClient cus_client = client.newBuilder()
-                //.connectTimeout(1, TimeUnit.MINUTES)
-                //.readTimeout(1, TimeUnit.MINUTES)
+                .connectTimeout(1, TimeUnit.MINUTES)
+                .readTimeout(1, TimeUnit.MINUTES)
                 .build();
 
         AppCompatActivity appCompatActivity = new AppCompatActivity();
@@ -136,6 +160,7 @@ public class ResultActivity extends AppCompatActivity {
                     try {
                         Toast.makeText(getApplicationContext(), "Fail to connect server", Toast.LENGTH_LONG).show();
                         //progressBar.setVisibility(View.GONE);
+
                     } catch (Exception e1) {
                         e1.printStackTrace();
                     }
@@ -151,10 +176,14 @@ public class ResultActivity extends AppCompatActivity {
                         String res = response.body().string().trim();
                         //Toast.makeText(getApplicationContext(), "Result = " + res, Toast.LENGTH_LONG).show();
                         Log.d(TAG, "onResponse: " + res.trim());
-                        progressBar.setVisibility(View.GONE);
                         Log.d(TAG, "onResponse: PATH : " + img_address);
                         //setData();
-                        initData(res);
+                        if (res.contains("www.herokucdn.com/error-pages/application-error.html")) {
+                            Log.d(TAG, "onResponse: Error appear");
+                            setData_Fail();
+                        } else {
+                            initData(res);
+                        }
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -169,13 +198,20 @@ public class ResultActivity extends AppCompatActivity {
             JSONObject jsonObject = new JSONObject(response);
 
             name = jsonObject.getString("character_thai").replace("[", "").replace("]", "").replace("\"", "");
-            desc = jsonObject.getString("desc").replace("[", "").replace("]", "").replace("\"", "");
+            desc = jsonObject.getString("character_desc").replace("[", "").replace("]", "").replace("\"", "");
             score = jsonObject.getString("score").replace("[", "").replace("]", "");
-            gesture = jsonObject.getString("gesture_name").replace("[", "").replace("]", "").replace("\"", "");
+            gesture_name = jsonObject.getString("gesture_name").replace("[", "").replace("]", "").replace("\"", "");
+            gesture_score = jsonObject.getString("gesture_score").replace("[", "").replace("]", "").replace("\"", "");
+            gestureDesc = jsonObject.getString("desc").replace("[", "").replace("]", "").replace("\"", "");
+            out_image = jsonObject.getString("out_image").replace("[", "").replace("]", "").replace("\"", "");
+            model_id = jsonObject.getString("gID").replace("[", "").replace("]", "").replace("\"", "");
 
             Log.d(TAG, "initData: Character : " + name + " Score : " + score + " %");
             Log.d(TAG, "initData: Description : " + desc);
-
+            Log.d(TAG, "initData: Gesture : " + gesture_name + " Score : " + gesture_score + " %");
+            Log.d(TAG, "initData: Gesture Description : " + gestureDesc);
+            Log.d(TAG, "initData: Image URL : " + URL.replace("/application", out_image.replace("\\/", "/")));
+            Log.d(TAG, "initData: Gesture ID : " + model_id);
             setData();
 
         } catch (JSONException e) {
@@ -185,14 +221,22 @@ public class ResultActivity extends AppCompatActivity {
 
     public void setData() {
         //Text
-        String string_builder = name + " " + score + " %";
-        mTItle.setText(string_builder);
+        String string_builder_character = name + " " + score + " %";
+        String string_builder_gesture = gesture_name + " " + gesture_score + " %";
+
+        progressBar_cha.setVisibility(View.GONE);
+        progressBar_gesture.setVisibility(View.GONE);
+        mTItle.setText(string_builder_character);
         mDescription.setText(desc);
+        mGesture.setText(string_builder_gesture);
+        mGestureDescription.setText(gestureDesc);
         //Image
         Log.d(TAG, "setPreviewImage: Image Path : " + img_real_path);
         Bitmap bMap = BitmapFactory.decodeFile(img_real_path);
         Log.d(TAG, "setData: Orientation : " + getOrientation(img_address));
-        String orientation = getOrientation(img_address);
+        Uri detect_img = Uri.parse(out_image);
+        String orientation = getOrientation(detect_img);
+
         if (orientation.equals("landscape")) {
             FrameLayout.LayoutParams imageViewParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
             mImage.setLayoutParams(imageViewParams);
@@ -200,7 +244,37 @@ public class ResultActivity extends AppCompatActivity {
             FrameLayout.LayoutParams imageViewParams = new FrameLayout.LayoutParams(1000, 1500);
             mImage.setLayoutParams(imageViewParams);
         }
-        mImage.setImageURI(Uri.parse(img_real_path));
+
+        String out_img_URL_Builder = URL.replace("/application", out_image.replace("\\/", "/"));
+
+        Glide.with(ResultActivity.this)
+                .asBitmap()
+                .load(out_img_URL_Builder)
+                .listener(new RequestListener<Bitmap>() {
+                    @Override
+                    public boolean onLoadFailed(GlideException e, Object model, Target<Bitmap> target, boolean isFirstResource) {
+                        Toast.makeText(ResultActivity.this, "Can't load image.", Toast.LENGTH_SHORT).show();
+                        Log.d(TAG, "onLoadFailed: Message : " + e);
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(Bitmap resource, Object model, Target<Bitmap> target, DataSource dataSource, boolean isFirstResource) {
+                        progressBar.setVisibility(View.GONE);
+                        return false;
+                    }
+                })
+                .into(mImage);
+
+        //mImage.setImageURI(Uri.parse(out_image));
+    }
+
+    public void setData_Fail() {
+        progressBar.setVisibility(View.GONE);
+        progressBar_cha.setVisibility(View.GONE);
+        progressBar_gesture.setVisibility(View.GONE);
+
+        mTItle.setText("Memory leak please contact Admin");
     }
 
     private String getOrientation(Uri uri) {

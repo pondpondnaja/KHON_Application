@@ -33,6 +33,7 @@ public class NewFragment extends Fragment {
     private MainActivity activity;
     private AppCompatActivity news_activity;
     private String new_img, new_title, news_des = "";
+    private String check_where;
     private Context context;
 
     @Override
@@ -53,8 +54,9 @@ public class NewFragment extends Fragment {
             new_img = bundle.getString("new_img");
             new_title = bundle.getString("new_title");
             news_des = bundle.getString("news_des");
+            check_where = bundle.getString("from");
 
-            activity.setToolbarTitle(new_title);
+            activity.setToolbarTitle(new_title.replace("&nbsp;", "").replace("<br>", ""));
             Objects.requireNonNull(news_activity.getSupportActionBar()).show();
             new Handler().postDelayed(() -> activity.toolbar_text.setSelected(true), 1000);
         }
@@ -68,7 +70,11 @@ public class NewFragment extends Fragment {
     public void onStop() {
         Log.d(TAG, "onStop: Stop");
         activity.toolbar_text.setSelected(false);
-        Objects.requireNonNull(news_activity.getSupportActionBar()).hide();
+        if (check_where.equals("list")) {
+            Objects.requireNonNull(news_activity.getSupportActionBar()).hide();
+        } else {
+            Objects.requireNonNull(news_activity.getSupportActionBar()).show();
+        }
         super.onStop();
     }
 
@@ -76,7 +82,11 @@ public class NewFragment extends Fragment {
     public void onDestroy() {
         Log.d(TAG, "onDestroy: Destroy");
         activity.toolbar_text.setSelected(false);
-        Objects.requireNonNull(news_activity.getSupportActionBar()).hide();
+        if (check_where.equals("list")) {
+            Objects.requireNonNull(news_activity.getSupportActionBar()).hide();
+        } else {
+            Objects.requireNonNull(news_activity.getSupportActionBar()).show();
+        }
         super.onDestroy();
     }
 

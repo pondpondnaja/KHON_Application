@@ -81,6 +81,7 @@ public class Full_NewViewAdapter extends RecyclerView.Adapter<Full_NewViewAdapte
                 bundle.putString("new_title",mName.get(position));
                 bundle.putString("new_img",mImageURL.get(position));
                 bundle.putString("news_des",mDescription.get(position));
+                bundle.putString("from", "list");
 
                 NewFragment newFragment = new NewFragment();
                 newFragment.setArguments(bundle);

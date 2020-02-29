@@ -43,7 +43,9 @@ public class MainActivity extends AppCompatActivity {//implements NavigationView
     private static final int Limit = 4;
     //private static final String URL = "http://192.168.64.2/3D/news.php";
     //private static final String URL = "https://utg-fansub.me/3D/news.php";
-    private static final String URL = "http://192.168.1.43:5000/androidNews";
+    //private static final String URL = "http://192.168.1.43:5000/androidNews";
+    //Real connection
+    private static final String URL = "http://khon.itar.site/androidNews";
 
     //private DrawerLayout drawer;
     private Toast backToast;
@@ -95,16 +97,6 @@ public class MainActivity extends AppCompatActivity {//implements NavigationView
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
         toolbar_text.setText(toolbar.getTitle());
 
-        /*
-        navigationView  = findViewById(R.id.navigationView);
-        navigationView.setNavigationItemSelectedListener(this);
-
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(MainActivity.this, drawer, toolbar,
-                R.string.navigation_draw_open, R.string.navigation_draw_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
-        */
-
         if (savedInstanceState == null) {
             toolbar_text.setText(getResources().getString(R.string.sp_text1));
         }
@@ -152,6 +144,7 @@ public class MainActivity extends AppCompatActivity {//implements NavigationView
         }
         if (fragmentManager.getBackStackEntryCount() == 0) {
             Log.d(TAG, "onResume: RecycleView AutoScroll Resume BackStack = " + fragmentManager.getBackStackEntryCount());
+            Objects.requireNonNull(getSupportActionBar()).show();
         }
         super.onResume();
     }
@@ -175,58 +168,6 @@ public class MainActivity extends AppCompatActivity {//implements NavigationView
         recyclerView.clearOnScrollListeners();
         super.onDestroy();
     }
-
-/*Side Menu.
-    @Override
-    public boolean onNavigationItemSelected(MenuItem menuItem){
-        switch (menuItem.getItemId()) {
-
-            case R.id.home_section:
-                toolbar.setTitle(getResources().getString(R.string.app_name));
-                int backStackEntry = getSupportFragmentManager().getBackStackEntryCount();
-                if (backStackEntry > 0) {
-                    for (int i = 0; i < backStackEntry; i++) {
-                        fragmentManager.popBackStackImmediate();
-                        onResume();
-                    }
-                }
-                Log.d(TAG, "onNavigationItemSelected: call on resume : backstack "+fragmentManager.getBackStackEntryCount());
-                break;
-
-            case R.id.pic_detect:
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .setCustomAnimations(R.anim.slide_in_right,R.anim.slide_out_right,R.anim.slide_in_right,R.anim.slide_out_right)
-                        .replace(R.id.fragment_container, new CameraFragment(),"camera").addToBackStack("pic_detect").commit();
-                onPause();
-                getSupportActionBar().hide();
-                break;
-
-            case R.id.ar_model:
-                toolbar.setTitle(menuItem.getTitle().toString());
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .setCustomAnimations(R.anim.slide_in_right,R.anim.slide_out_right,R.anim.slide_in_right,R.anim.slide_out_right)
-                        .replace(R.id.fragment_container, new ARFragment(),"ar_model").addToBackStack("ar").commit();
-                Log.d(TAG, "onNavigationItemSelected: Back stack AR = "+getSupportFragmentManager().getBackStackEntryCount());
-                //getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ARFragment(),"ar_model").addToBackStack(null).commit();
-                onPause();
-                break;
-
-            case R.id.message:
-                Intent emailIntent = new Intent(android.content.Intent.ACTION_VIEW);
-                Uri data = Uri.parse("mailto:giggabome@gmail.com?subject=" + "Provide support");
-                emailIntent.setData(data);
-                startActivity(emailIntent);
-                overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_right);
-                break;
-        }
-
-        drawer.closeDrawer(GravityCompat.START);
-
-        return true;
-    }
-*/
 
     public void initImageBitmap() {
 
@@ -281,33 +222,6 @@ public class MainActivity extends AppCompatActivity {//implements NavigationView
         recyclerView.setAdapter(adapter);
         //scrollable();
     }
-
-    /*public void scrollable() {
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                int last = layoutManager.findLastCompletelyVisibleItemPosition();
-                int finalSize = adapter.getItemCount() - 1;
-                if (last == finalSize){
-                    layoutManager.scrollToPosition(0);
-                }
-            }
-        });
-    }
-
-    public void autoScrolltoLeft() {
-        handler   = new Handler();
-        runtoLeft = new Runnable() {
-            @Override
-            public void run() {
-                isRunning = true;
-                recyclerView.scrollBy(2, 0);
-                handler.postDelayed(this, 0);
-            }
-        };
-        handler.postDelayed(runtoLeft, 0);
-    }*/
 
     public void ARClick() {
         getSupportFragmentManager()
@@ -415,14 +329,6 @@ public class MainActivity extends AppCompatActivity {//implements NavigationView
     public void onBackPressed() {
 
         Objects.requireNonNull(getSupportActionBar()).show();
-
-        /*
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-            Log.d(TAG, "onBackPressed: Backstack 1 = "+fragmentManager.getBackStackEntryCount());
-
-        }else
-        */
 
         if (fragmentManager.getBackStackEntryCount() > 0) {
             fragmentManager.popBackStackImmediate();
