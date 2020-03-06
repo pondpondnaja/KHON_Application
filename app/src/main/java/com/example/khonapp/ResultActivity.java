@@ -55,6 +55,7 @@ public class ResultActivity extends AppCompatActivity {
     //private static final String URL = "http://192.168.64.2/3D/testscript.php";
     //Real connection
     private static final String URL = "http://khon.itar.site/application";
+
     private String img_path, img_real_path, previewPath, name, desc, score, gesture_name, gesture_score, gestureDesc, out_image, model_id;
 
     private TextView mTItle, mDescription, mGesture, mGestureDescription;
@@ -274,7 +275,7 @@ public class ResultActivity extends AppCompatActivity {
         progressBar_cha.setVisibility(View.GONE);
         progressBar_gesture.setVisibility(View.GONE);
 
-        mTItle.setText("Memory leak please contact Admin");
+        mTItle.setText("Memory leak please contact supporter.");
     }
 
     private String getOrientation(Uri uri) {

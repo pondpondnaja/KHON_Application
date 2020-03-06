@@ -35,6 +35,7 @@ public class CalendarFragment extends Fragment {
     //private static final String URL = "http://192.168.1.43:5000/androidEvents";
     //private static final String URL = "http://192.168.64.2/3D/calendar.php";
     //private static final String URL = "https://utg-fansub.me/3D/calendar.php";
+
     //Real connect
     private static final String URL = "http://khon.itar.site/androidEvents";
 
@@ -87,7 +88,6 @@ public class CalendarFragment extends Fragment {
         }*/
 
         calendarView.setOnDayClickListener(eventDay -> {
-            //Log.d(TAG, "onDayClick: " + eventDay.getCalendar().get(Calendar.DATE));
             int i;
             boolean match = false;
             String URL_Builder;
@@ -167,8 +167,9 @@ public class CalendarFragment extends Fragment {
     }
 
     private void initData() {
+        String URL_Builder = URL + "?app_check=android";
         RequestQueue requestQueue = Volley.newRequestQueue(context);
-        JsonArrayRequest request = new JsonArrayRequest(Request.Method.POST, URL, null,
+        JsonArrayRequest request = new JsonArrayRequest(Request.Method.POST, URL_Builder, null,
                 response -> {
                     //Log.d(TAG, "onResponse: JSON respond : "+response);
                     for (int i = 0; i < response.length(); i++) {                    // Parsing json
