@@ -66,7 +66,7 @@ dependencies {
     implementation 'com.google.ar:core:1.15.0'
     implementation 'com.google.ar.sceneform:assets:1.15.0'
     //FireBase
-    implementation 'com.google.firebase:firebase-core:17.2.2'
+    implementation 'com.google.firebase:firebase-core:17.2.3'
     implementation 'com.google.firebase:firebase-storage:19.1.1'
     implementation 'com.google.firebase:firebase-database:19.2.1'
     implementation 'com.firebaseui:firebase-ui-database:5.0.0'
@@ -76,7 +76,7 @@ dependencies {
     implementation 'com.android.volley:volley:1.1.1'
     //Calendar
     implementation 'com.applandeo:material-calendar-view:1.7.0'
-    //FlaskConnector
+    //OkHttp
     implementation 'com.squareup.okhttp3:okhttp:3.12.1'
 }
 

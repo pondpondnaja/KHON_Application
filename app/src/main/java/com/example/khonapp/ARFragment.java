@@ -60,16 +60,16 @@ public class ARFragment extends Fragment {
 
     private void initData() {
         Log.d(TAG, "initData: addData");
-        ARName.add("ท่าที่ 1 : ฉัน");
-        ARName.add("ท่าที่ 2 : โกรธ");
-        ARName.add("ท่าที่ 3 : ร้องไห้");
-        ARName.add("ท่าที่ 4 : อาย");
-        ARName.add("ท่าที่ 5 : ยิ้ม");
-        ARName.add("ท่าที่ 6 : ");
-        ARName.add("ท่าที่ 7 : ");
-        ARName.add("ท่าที่ 8 : ");
-        ARName.add("ท่าที่ 9 : ");
-        ARName.add("ท่าที่ 10 : ");
+        ARName.add("ท่าที่ 1 : ฉัน,ตัวเรา");
+        ARName.add("ท่าที่ 2 : โกรธ,โมโห");
+        ARName.add("ท่าที่ 3 : ร้องไห้โศกา");
+        ARName.add("ท่าที่ 4 : เขิน,อาย");
+        ARName.add("ท่าที่ 5 : ยิ้ม,ดีใจ");
+        ARName.add("ท่าที่ 6 : รัก");
+        ARName.add("ท่าที่ 7 : ปฏิเสธ,ไม่");
+        ARName.add("ท่าที่ 8 : สูญสิ้น,ตาย");
+        ARName.add("ท่าที่ 9 : ยิ่งใหญ่,เกรียงไกร");
+        ARName.add("ท่าที่ 10 : ที่นั่น,ที่นี่,ชี้ไห้เห็น");
 
         FolderName.add("Am");
         FolderName.add("Angry");

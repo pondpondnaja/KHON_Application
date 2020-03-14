@@ -31,11 +31,13 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
@@ -56,13 +58,24 @@ public class ResultActivity extends AppCompatActivity {
     //Real connection
     private static final String URL = "http://khon.itar.site/application";
 
-    private String img_path, img_real_path, previewPath, name, desc, score, gesture_name, gesture_score, gestureDesc, out_image, model_id;
+    //ArrayList
+    private ArrayList<String> name = new ArrayList<>();
+    private ArrayList<String> desc = new ArrayList<>();
+    private ArrayList<String> score = new ArrayList<>();
+    private ArrayList<String> gesture_name = new ArrayList<>();
+    private ArrayList<String> gesture_score = new ArrayList<>();
+    private ArrayList<String> gestureDesc = new ArrayList<>();
+    private ArrayList<String> out_img = new ArrayList<>();
+    private ArrayList<String> model_id = new ArrayList<>();
+
+    private String img_path, img_real_path, previewPath, out_image;
 
     private TextView mTItle, mDescription, mGesture, mGestureDescription;
     private ImageView mImage;
     private ProgressBar progressBar, progressBar_cha, progressBar_gesture;
 
     Uri img_address;
+    MainActivity mainActivity = new MainActivity();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,7 +121,7 @@ public class ResultActivity extends AppCompatActivity {
                 //progressBar.setVisibility(View.GONE);
                 //setData();
 
-                connectServer();
+                createBody();
             }
         }
     }
@@ -119,19 +132,20 @@ public class ResultActivity extends AppCompatActivity {
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
     }
 
-    public void connectServer() {
+    public void createBody() {
 
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inPreferredConfig = Bitmap.Config.RGB_565;
-        // Read BitMap by file path
+
         Bitmap bitmap = BitmapFactory.decodeFile(img_real_path, options);
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
         byte[] byteArray = stream.toByteArray();
 
         RequestBody postBodyImage = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
-                .addFormDataPart("file_input", "androidFlask.jpg", RequestBody.create(MediaType.parse("image/*jpg"), byteArray))
+                .addFormDataPart("file_input", "androidFlask.jpg",
+                        RequestBody.create(MediaType.parse("image/*jpg"), byteArray))
                 .addFormDataPart("app_check", "android")
                 .build();
 
@@ -140,8 +154,7 @@ public class ResultActivity extends AppCompatActivity {
 
     private void postRequest(String postUrl, RequestBody postBody) {
 
-        OkHttpClient client = new OkHttpClient();
-        OkHttpClient cus_client = client.newBuilder()
+        OkHttpClient cus_client = mainActivity.client.newBuilder()
                 .connectTimeout(1, TimeUnit.MINUTES)
                 .readTimeout(1, TimeUnit.MINUTES)
                 .build();
@@ -155,27 +168,22 @@ public class ResultActivity extends AppCompatActivity {
         cus_client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                // Cancel the post on failure.
                 call.cancel();
                 appCompatActivity.runOnUiThread(() -> {
                     try {
                         Toast.makeText(getApplicationContext(), "Fail to connect server", Toast.LENGTH_LONG).show();
-                        //progressBar.setVisibility(View.GONE);
 
                     } catch (Exception e1) {
                         e1.printStackTrace();
                     }
                 });
             }
-
             @Override
             public void onResponse(Call call, final Response response) {
-                // In order to access the TextView inside the UI thread, the code is executed inside runOnUiThread()
                 appCompatActivity.runOnUiThread(() -> {
                     try {
                         assert response.body() != null;
                         String res = response.body().string().trim();
-                        //Toast.makeText(getApplicationContext(), "Result = " + res, Toast.LENGTH_LONG).show();
                         Log.d(TAG, "onResponse: " + res.trim());
                         Log.d(TAG, "onResponse: PATH : " + img_address);
                         //setData();
@@ -185,7 +193,7 @@ public class ResultActivity extends AppCompatActivity {
                         } else {
                             initData(res);
                         }
-                    } catch (IOException e) {
+                    } catch (IOException | JSONException e) {
                         e.printStackTrace();
                     }
                 });
@@ -193,26 +201,33 @@ public class ResultActivity extends AppCompatActivity {
         });
     }
 
-    public void initData(String response) {
+    public void initData(String response) throws JSONException {
         //Log.d(TAG, "initData: Response JSON : "+response.toString());
+        JSONArray jsonArray = new JSONArray(response);
         try {
-            JSONObject jsonObject = new JSONObject(response);
+            //JSONObject obj = new JSONObject(response);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject obj = jsonArray.getJSONObject(i);
 
-            name = jsonObject.getString("character_thai").replace("[", "").replace("]", "").replace("\"", "");
-            desc = jsonObject.getString("character_desc").replace("[", "").replace("]", "").replace("\"", "");
-            score = jsonObject.getString("score").replace("[", "").replace("]", "");
-            gesture_name = jsonObject.getString("gesture_name").replace("[", "").replace("]", "").replace("\"", "");
-            gesture_score = jsonObject.getString("gesture_score").replace("[", "").replace("]", "").replace("\"", "");
-            gestureDesc = jsonObject.getString("desc").replace("[", "").replace("]", "").replace("\"", "");
-            out_image = jsonObject.getString("out_image").replace("[", "").replace("]", "").replace("\"", "");
-            model_id = jsonObject.getString("gID").replace("[", "").replace("]", "").replace("\"", "");
+                String nameJ = obj.getString("character_thai");
+                String descJ = obj.getString("character_desc");
+                String scoreJ = obj.getString("score");
+                String gesture_nameJ = obj.getString("gesture_name");
+                String gesture_scoreJ = obj.getString("gesture_score");
+                String gestureDescJ = obj.getString("desc");
+                String out_imageJ = obj.getString("out_image");
+                String model_idJ = obj.getString("gID");
 
-            Log.d(TAG, "initData: Character : " + name + " Score : " + score + " %");
-            Log.d(TAG, "initData: Description : " + desc);
-            Log.d(TAG, "initData: Gesture : " + gesture_name + " Score : " + gesture_score + " %");
-            Log.d(TAG, "initData: Gesture Description : " + gestureDesc);
-            Log.d(TAG, "initData: Image URL : " + URL.replace("/application", out_image.replace("\\/", "/")));
-            Log.d(TAG, "initData: Gesture ID : " + model_id);
+                name.add(nameJ);
+                desc.add(descJ);
+                score.add(scoreJ);
+                gesture_name.add(gesture_nameJ);
+                gesture_score.add(gesture_scoreJ);
+                gestureDesc.add(gestureDescJ);
+                out_img.add(out_imageJ);
+                model_id.add(model_idJ);
+            }
+
             setData();
 
         } catch (JSONException e) {
@@ -228,9 +243,9 @@ public class ResultActivity extends AppCompatActivity {
         progressBar_cha.setVisibility(View.GONE);
         progressBar_gesture.setVisibility(View.GONE);
         mTItle.setText(string_builder_character);
-        mDescription.setText(desc);
+        //mDescription.setText(desc);
         mGesture.setText(string_builder_gesture);
-        mGestureDescription.setText(gestureDesc);
+        //mGestureDescription.setText(gestureDesc);
         //Image
         Log.d(TAG, "setPreviewImage: Image Path : " + img_real_path);
         Bitmap bMap = BitmapFactory.decodeFile(img_real_path);
@@ -389,7 +404,7 @@ public class ResultActivity extends AppCompatActivity {
             case PERMISSION_CODE: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     //permission from popup was granted
-                    setData();
+                    createBody();
                 } else {
                     //permission from popup was denied
                     Toast.makeText(this, "Permission denied...", Toast.LENGTH_SHORT).show();

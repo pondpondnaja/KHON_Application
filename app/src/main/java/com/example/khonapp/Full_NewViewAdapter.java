@@ -26,16 +26,20 @@ import java.util.ArrayList;
 
 public class Full_NewViewAdapter extends RecyclerView.Adapter<Full_NewViewAdapter.ViewHolder> {
     private static final String TAG = "NewAC";
-    private ArrayList<String> mName        = new ArrayList<>();
-    private ArrayList<String> mImageURL    = new ArrayList<>();
-    private ArrayList<String> mDescription = new ArrayList<>();
+    private ArrayList<String> news_date = new ArrayList<>();
+    private ArrayList<String> news_desc = new ArrayList<>();
+    private ArrayList<String> news_img = new ArrayList<>();
+    private ArrayList<String> news_link = new ArrayList<>();
+    private ArrayList<String> news_title = new ArrayList<>();
     private Context mcontext;
     Bundle bundle;
 
-    public Full_NewViewAdapter(ArrayList<String> mName, ArrayList<String> mImageURL, ArrayList<String> mDescription, Context mcontext) {
-        this.mName = mName;
-        this.mImageURL = mImageURL;
-        this.mDescription = mDescription;
+    public Full_NewViewAdapter(ArrayList<String> news_date, ArrayList<String> news_desc, ArrayList<String> news_img, ArrayList<String> news_link, ArrayList<String> news_title, Context mcontext) {
+        this.news_date = news_date;
+        this.news_desc = news_desc;
+        this.news_img = news_img;
+        this.news_link = news_link;
+        this.news_title = news_title;
         this.mcontext = mcontext;
     }
 
@@ -48,13 +52,12 @@ public class Full_NewViewAdapter extends RecyclerView.Adapter<Full_NewViewAdapte
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
-        holder.new_title.setText(mName.get(position).trim().replace("&nbsp;", "").replace("<br>", ""));
+        holder.new_title.setText(news_title.get(position).trim());
         holder.new_title.setSelected(true);
 
-        String URL_Builder = "http://192.168.1.43:5000/static/images/news/" + mImageURL.get(position);
         Glide.with(mcontext)
                 .asBitmap()
-                .load(URL_Builder)
+                .load(news_img.get(position))
                 .listener(new RequestListener<Bitmap>() {
                     @Override
                     public boolean onLoadFailed(GlideException e, Object model, Target<Bitmap> target, boolean isFirstResource) {
@@ -74,13 +77,11 @@ public class Full_NewViewAdapter extends RecyclerView.Adapter<Full_NewViewAdapte
         holder.new_parent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d(TAG, "onClick: click on image : " + mName.get(position));
-                Toast.makeText(mcontext, mName.get(position),Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "onClick: click on image : " + news_title.get(position));
+                Toast.makeText(mcontext, news_title.get(position), Toast.LENGTH_SHORT).show();
 
                 bundle = new Bundle();
-                bundle.putString("new_title",mName.get(position));
-                bundle.putString("new_img",mImageURL.get(position));
-                bundle.putString("news_des",mDescription.get(position));
+                bundle.putString("news_link", news_link.get(position));
                 bundle.putString("from", "list");
 
                 NewFragment newFragment = new NewFragment();
@@ -97,7 +98,7 @@ public class Full_NewViewAdapter extends RecyclerView.Adapter<Full_NewViewAdapte
 
     @Override
     public int getItemCount() {
-        return 5;
+        return news_title.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

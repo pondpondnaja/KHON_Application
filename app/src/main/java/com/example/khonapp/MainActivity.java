@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
@@ -23,16 +24,21 @@ import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.Volley;
-
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {//implements NavigationView.OnNavigationItemSelectedListener{
     private static final String TAG = "mainAc";
@@ -45,8 +51,7 @@ public class MainActivity extends AppCompatActivity {//implements NavigationView
     //private static final String URL = "https://utg-fansub.me/3D/news.php";
     //private static final String URL = "http://192.168.1.43:5000/androidNews";
     //Real connection
-    private static final String URL = "http://khon.itar.site/androidNews";
-
+    private static final String URL = "http://khon.itar.site";
     //private DrawerLayout drawer;
     private Toast backToast;
 
@@ -63,19 +68,26 @@ public class MainActivity extends AppCompatActivity {//implements NavigationView
     public CardView ar_card, detect_card, os_1, os_2, optional, camera_holder, gallery_holder;
 
     //Recycle vars.
-    private ArrayList<String> mName = new ArrayList<>();
-    private ArrayList<String> mImageURL = new ArrayList<>();
-    private ArrayList<String> mDescription = new ArrayList<>();
+    private ArrayList<String> news_date = new ArrayList<>();
+    private ArrayList<String> news_desc = new ArrayList<>();
+    private ArrayList<String> news_img = new ArrayList<>();
+    private ArrayList<String> news_link = new ArrayList<>();
+    private ArrayList<String> news_title = new ArrayList<>();
 
     //Layout
     LinearLayoutManager layoutManager;
     SlideRecycleViewAdapter adapter;
+    //Connection
+    public OkHttpClient client = new OkHttpClient();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, "onCreate: MainScreen");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
 
         if (Build.VERSION.SDK_INT >= 23) {
             requestPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 2);
@@ -125,14 +137,14 @@ public class MainActivity extends AppCompatActivity {//implements NavigationView
             emailIntent.setData(Uri.parse(mailto));
             startActivity(emailIntent);
         });
-        //initImageBitmap();
+        //connectServer();
     }
 
 
     @Override
     protected void onStart() {
         Log.d(TAG, "onStart: AutoScroll Enable");
-        initImageBitmap();
+        connectServer();
         super.onStart();
     }
 
@@ -154,8 +166,6 @@ public class MainActivity extends AppCompatActivity {//implements NavigationView
         Log.d(TAG, "onPause: RecycleView AutoScroll Pause and Remove Callback");
         //recyclerView.clearFocus();
         //recyclerView.clearOnScrollListeners();
-        Log.d(TAG, "onPause: mName     : " + mName.size());
-        Log.d(TAG, "onPause: mImageURL : " + mImageURL.size());
         super.onPause();
     }
 
@@ -169,47 +179,85 @@ public class MainActivity extends AppCompatActivity {//implements NavigationView
         super.onDestroy();
     }
 
-    public void initImageBitmap() {
+    public void connectServer() {
 
-        if (!mImageURL.isEmpty() || !mName.isEmpty() || !mDescription.isEmpty()) {
+        if (!news_title.isEmpty() || !news_desc.isEmpty() || !news_img.isEmpty() || !news_date.isEmpty() || !news_link.isEmpty()) {
             return;
         }
 
-        RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.this);
-        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, URL, null,
-                response -> {
-                    Log.d(TAG, "onResponse: JSON respond : " + response);
-                    for (int i = 0; i < Limit; i++) {                    // Parsing json
-                        try {
-                            JSONObject obj = response.getJSONObject(i);
-                            String title = obj.getString("title");
-                            String description = obj.getString("description");
-                            String image_url = obj.getString("img_name");
+        RequestBody postBody = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("app_check", "android")
+                .build();
 
-                            String[] split = image_url.split(",");
-                            String real_img_url = split[0];
-                            //Log.d(TAG, "onResponse: Title : " + title + " Image url : " + image_url);
+        OkHttpClient cus_client = client.newBuilder().build();
+        Request request = new Request.Builder()
+                .url(URL)
+                .post(postBody)
+                .build();
 
-                            mName.add(title);
-                            mDescription.add(description);
-                            mImageURL.add(real_img_url);
+        cus_client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                call.cancel();
+                runOnUiThread(() -> {
+                    try {
+                        Toast.makeText(getApplicationContext(), "Fail to connect server", Toast.LENGTH_LONG).show();
 
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                    } catch (Exception e1) {
+                        e1.printStackTrace();
                     }
-                    mName.add("Read more");
-                    mDescription.add("Read more");
-                    mImageURL.add("Read more");
-                    initRecycleView();
-                    //scrollable();
-                    //autoScrolltoLeft();
-                }, error -> {
-            Log.d(TAG, "onErrorResponse: Error appear");
-            Toast.makeText(MainActivity.this, "Please check your internet connection or go to contact us.", Toast.LENGTH_LONG).show();
-            error.printStackTrace();
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, final Response response) {
+                runOnUiThread(() -> {
+                    try {
+                        assert response.body() != null;
+                        String res = response.body().string().trim();
+                        Log.d(TAG, "onResponse: " + res.trim());
+                        //setData();
+                        if (res.contains("www.herokucdn.com/error-pages/application-error.html")) {
+                            Log.d(TAG, "onResponse: Error appear");
+                            //setData_Fail();
+                        } else {
+                            initData(res);
+                        }
+                    } catch (IOException | JSONException e) {
+                        e.printStackTrace();
+                    }
+                });
+            }
         });
-        requestQueue.add(request);
+    }
+
+    public void initData(String response) throws JSONException {
+        //Log.d(TAG, "initData: Response JSON : "+response.toString());
+        JSONArray jsonArray = new JSONArray(response);
+        try {
+            //JSONObject obj = new JSONObject(response);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject obj = jsonArray.getJSONObject(i);
+
+                String news_dateJ = obj.getString("news_date");
+                String news_descJ = obj.getString("news_desc");
+                String news_imgJ = obj.getString("news_img");
+                String news_linkJ = obj.getString("news_link");
+                String news_titleJ = obj.getString("news_title");
+
+                news_date.add(news_dateJ);
+                news_desc.add(news_descJ);
+                news_img.add(news_imgJ);
+                news_link.add(news_linkJ);
+                news_title.add(news_titleJ);
+            }
+
+            initRecycleView();
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     private void initRecycleView() {
@@ -217,7 +265,7 @@ public class MainActivity extends AppCompatActivity {//implements NavigationView
         layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         recyclerView = findViewById(R.id.recycleview);
         recyclerView.setLayoutManager(layoutManager);
-        adapter = new SlideRecycleViewAdapter(this, this, mName, mImageURL, mDescription);
+        adapter = new SlideRecycleViewAdapter(news_date, news_desc, news_img, news_link, news_title, this, MainActivity.this);
         recyclerView.setHasFixedSize(false);
         recyclerView.setAdapter(adapter);
         //scrollable();
@@ -236,10 +284,8 @@ public class MainActivity extends AppCompatActivity {//implements NavigationView
 
     public void GalleryClick() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) ==
-                    PackageManager.PERMISSION_DENIED ||
-                    checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
-                            PackageManager.PERMISSION_DENIED) {
+            if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED ||
+                    checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
                 //permission not enabled, request it
                 String[] permission = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
                 //show popup to request permissions
@@ -259,8 +305,7 @@ public class MainActivity extends AppCompatActivity {//implements NavigationView
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.CAMERA) ==
                     PackageManager.PERMISSION_DENIED ||
-                    checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
-                            PackageManager.PERMISSION_DENIED) {
+                    checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
                 //permission not enabled, request it
                 String[] permission = {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
                 //show popup to request permissions

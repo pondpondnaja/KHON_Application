@@ -116,7 +116,7 @@ public class ARActivity extends AppCompatActivity implements View.OnClickListene
             }
 
             //Build Path
-            getPath(FolderName, "human_m");
+            buildPath(FolderName, "human_m");
             arFragment = (ArFragment) getSupportFragmentManager().findFragmentById(R.id.arFragment_model);
 
             //init model border
@@ -200,7 +200,7 @@ public class ARActivity extends AppCompatActivity implements View.OnClickListene
             human_fm.setBorderWidth(0);
             giant.setBorderWidth(0);
             monkey.setBorderWidth(0);
-            getPath(FolderName, "human_m");
+            buildPath(FolderName, "human_m");
             Log.d(TAG, "onClick: New Path : " + ASSET_3D);
 
         } else if (view.getId() == R.id.human_fm) {
@@ -212,7 +212,7 @@ public class ARActivity extends AppCompatActivity implements View.OnClickListene
             human_fm.setBorderWidth(15);
             giant.setBorderWidth(0);
             monkey.setBorderWidth(0);
-            getPath(FolderName, "human_fm");
+            buildPath(FolderName, "human_fm");
             Log.d(TAG, "onClick: New Path : " + ASSET_3D);
 
         } else if (view.getId() == R.id.giant) {
@@ -224,7 +224,7 @@ public class ARActivity extends AppCompatActivity implements View.OnClickListene
             human_fm.setBorderWidth(0);
             giant.setBorderWidth(15);
             monkey.setBorderWidth(0);
-            getPath(FolderName, "giant");
+            buildPath(FolderName, "giant");
             Log.d(TAG, "onClick: New Path : " + ASSET_3D);
 
         } else if (view.getId() == R.id.monkey) {
@@ -236,7 +236,7 @@ public class ARActivity extends AppCompatActivity implements View.OnClickListene
             human_fm.setBorderWidth(0);
             giant.setBorderWidth(0);
             monkey.setBorderWidth(15);
-            getPath(FolderName, "monkey");
+            buildPath(FolderName, "monkey");
             Log.d(TAG, "onClick: New Path : " + ASSET_3D);
 
         }
@@ -262,10 +262,10 @@ public class ARActivity extends AppCompatActivity implements View.OnClickListene
         }
     }
 
-    private void getPath(String action, String races) {
+    private void buildPath(String action, String races) {
 
         String build_url = url + "action=" + action + "&" + "races=" + races;
-        Log.d(TAG, "getPath: Final url : " + build_url);
+        Log.d(TAG, "buildPath: Final url : " + build_url);
         RequestQueue requestQueue = Volley.newRequestQueue(ARActivity.this);
         StringRequest request = new StringRequest(Request.Method.GET, build_url,
                 response -> {
@@ -277,7 +277,7 @@ public class ARActivity extends AppCompatActivity implements View.OnClickListene
                         description = item.getString("description");
                         ASSET_3D = model_url.replace("http://", "https://");
                         Log.d(TAG, "onResponse: Path from respond : " + ASSET_3D);
-                        Log.d(TAG, "getPath: Description : " + description);
+                        Log.d(TAG, "buildPath: Description : " + description);
 
                     } catch (JSONException e) {
                         e.printStackTrace();

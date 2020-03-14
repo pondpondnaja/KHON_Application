@@ -3,65 +3,83 @@ package com.example.khonapp;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.DataSource;
-import com.bumptech.glide.load.engine.GlideException;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
 
 import java.util.Objects;
 
 public class NewFragment extends Fragment {
     private static final String TAG = "newAc";
 
-    private ImageView news_img;
-    private TextView news_title, news_detail;
-    private ProgressBar progressBar2;
     private MainActivity activity;
     private AppCompatActivity news_activity;
-    private String new_img, new_title, news_des = "";
+    private String news_link;
     private String check_where;
     private Context context;
+    private ProgressBar progressBar;
+    private WebView webView;
+    private ImageView imageView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.activity_news, container, false);
 
-        context = view.getContext();
-        news_img = view.findViewById(R.id.news_img);
-        news_title = view.findViewById(R.id.news_title);
-        news_detail = view.findViewById(R.id.news_detail);
-        progressBar2 = view.findViewById(R.id.progressBar_news);
 
+        context = view.getContext();
+        imageView = view.findViewById(R.id.img_overlay_news);
+        webView = view.findViewById(R.id.new_viewer);
+        progressBar = view.findViewById(R.id.progressBar);
         activity = (MainActivity) getActivity();
         news_activity = (AppCompatActivity) view.getContext();
 
+        Objects.requireNonNull(news_activity.getSupportActionBar()).hide();
+
         Bundle bundle = getArguments();
         if (bundle != null) {
-            new_img = bundle.getString("new_img");
-            new_title = bundle.getString("new_title");
-            news_des = bundle.getString("news_des");
+            news_link = bundle.getString("news_link");
             check_where = bundle.getString("from");
-
-            activity.setToolbarTitle(new_title.replace("&nbsp;", "").replace("<br>", ""));
-            Objects.requireNonNull(news_activity.getSupportActionBar()).show();
-            new Handler().postDelayed(() -> activity.toolbar_text.setSelected(true), 1000);
         }
 
-        setData();
+        Log.d(TAG, "onCreateView: Link : " + news_link);
+
+        WebSettings webSettings = webView.getSettings();
+        webSettings.setJavaScriptEnabled(true);
+        webView.loadUrl(news_link);
+
+        webView.setWebViewClient(new WebViewClient() {
+
+            @Override
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                progressBar.setVisibility(View.VISIBLE);
+                imageView.setVisibility(View.VISIBLE);
+                progressBar.bringToFront();
+                super.onPageStarted(view, url, favicon);
+            }
+
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                progressBar.setVisibility(View.GONE);
+                imageView.setVisibility(View.GONE);
+                Log.d(TAG, "onPageFinished: Finish");
+                super.onPageFinished(view, url);
+            }
+        });
+
+        if (savedInstanceState != null)
+            webView.restoreState(savedInstanceState);
+        else {
+            webView.loadUrl(news_link);
+        }
 
         return view;
     }
@@ -88,29 +106,5 @@ public class NewFragment extends Fragment {
             Objects.requireNonNull(news_activity.getSupportActionBar()).show();
         }
         super.onDestroy();
-    }
-
-    private void setData() {
-
-        String URL_Builder = "http://192.168.1.43:5000/static/images/news/" + new_img;
-        Glide.with(context)
-                .asBitmap()
-                .load(URL_Builder)
-                .listener(new RequestListener<Bitmap>() {
-                    @Override
-                    public boolean onLoadFailed(GlideException e, Object model, Target<Bitmap> target, boolean isFirstResource) {
-                        Toast.makeText(getContext(), "Can't load image.", Toast.LENGTH_SHORT).show();
-                        return false;
-                    }
-
-                    @Override
-                    public boolean onResourceReady(Bitmap resource, Object model, Target<Bitmap> target, DataSource dataSource, boolean isFirstResource) {
-                        progressBar2.setVisibility(View.GONE);
-                        return false;
-                    }
-                })
-                .into(news_img);
-        news_title.setText(new_title.replace("&nbsp;", "").replace("<br>", ""));
-        news_detail.setText(news_des.replace("&nbsp;", "").replace("<br>", ""));
     }
 }

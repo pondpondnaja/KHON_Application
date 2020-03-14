@@ -31,25 +31,30 @@ public class SlideRecycleViewAdapter extends RecyclerView.Adapter<SlideRecycleVi
     private static final String TAG = "SlideRecycleView";
     private static final int Slide_size = 4;
     //vars
-    private ArrayList<String> mName = new ArrayList<>();
-    private ArrayList<String> mImageURL = new ArrayList<>();
-    private ArrayList<String> mDescription = new ArrayList<>();
+    private ArrayList<String> news_date = new ArrayList<>();
+    private ArrayList<String> news_desc = new ArrayList<>();
+    private ArrayList<String> news_img = new ArrayList<>();
+    private ArrayList<String> news_link = new ArrayList<>();
+    private ArrayList<String> news_title = new ArrayList<>();
+
     private Context mcontext;
     private Activity mActivity;
     Bundle bundle;
     View view;
 
-    public SlideRecycleViewAdapter(Activity mActivity, Context mContext, ArrayList<String> mName, ArrayList<String> mImageURL, ArrayList<String> mDescription) {
-        this.mName = mName;
-        this.mImageURL = mImageURL;
-        this.mDescription = mDescription;
-        this.mcontext = mContext;
+    public SlideRecycleViewAdapter(ArrayList<String> news_date, ArrayList<String> news_desc, ArrayList<String> news_img, ArrayList<String> news_link, ArrayList<String> news_title, Context mcontext, Activity mActivity) {
+        this.news_date = news_date;
+        this.news_desc = news_desc;
+        this.news_img = news_img;
+        this.news_link = news_link;
+        this.news_title = news_title;
+        this.mcontext = mcontext;
         this.mActivity = mActivity;
     }
 
     @Override
     public int getItemViewType(int position) {
-        Log.d(TAG, "getItemViewType: TypeView : " + position + " mNameSize = " + mName.size());
+        Log.d(TAG, "getItemViewType: TypeView : " + position + " mNameSize = " + news_date.size());
         if (position == Slide_size) {
             return 2;
         } else {
@@ -72,17 +77,16 @@ public class SlideRecycleViewAdapter extends RecyclerView.Adapter<SlideRecycleVi
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
         Log.d(TAG, "onBindViewHolder: called");
-        Log.d(TAG, "onBindViewHolder: ImgURL : " + mImageURL.get(position));
+        Log.d(TAG, "onBindViewHolder: ImgURL : " + news_img.get(position));
         //Set image
         if (position == getItemCount() - 1) {
             Glide.with(mcontext)
                     .load(R.drawable.ic_play_circle_outline_black_24dp)
                     .into(holder.img);
         } else {
-            String URL_Builder = "http://192.168.1.43:5000/static/images/news/" + mImageURL.get(position);
             Glide.with(mcontext)
                     .asBitmap()
-                    .load(URL_Builder)
+                    .load(news_img.get(position))
                     .listener(new RequestListener<Bitmap>() {
                         @Override
                         public boolean onLoadFailed(GlideException e, Object model, Target<Bitmap> target, boolean isFirstResource) {
@@ -100,8 +104,8 @@ public class SlideRecycleViewAdapter extends RecyclerView.Adapter<SlideRecycleVi
         }
 
         holder.parentLayout.setOnClickListener(view -> {
-            Log.d(TAG, "onClick: click on image : " + mName.get(position));
-            Toast.makeText(mcontext, mName.get(position), Toast.LENGTH_SHORT).show();
+            Log.d(TAG, "onClick: click on image : " + news_title.get(position));
+            Toast.makeText(mcontext, news_title.get(position), Toast.LENGTH_SHORT).show();
 
             if (position == Slide_size) {
                 AppCompatActivity news_activity = (AppCompatActivity) view.getContext();
@@ -112,9 +116,7 @@ public class SlideRecycleViewAdapter extends RecyclerView.Adapter<SlideRecycleVi
                         .replace(R.id.fragment_container, new Full_NewListFragment(), "full_news").addToBackStack("full_news").commit();
             } else {
                 bundle = new Bundle();
-                bundle.putString("new_title", mName.get(position));
-                bundle.putString("new_img", mImageURL.get(position));
-                bundle.putString("news_des", mDescription.get(position));
+                bundle.putString("news_link", news_link.get(position));
                 bundle.putString("from", "main");
 
                 NewFragment newFragment = new NewFragment();
