@@ -1,36 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<RelativeLayout android:id="@+id/preview_container"
+<androidx.drawerlayout.widget.DrawerLayout android:id="@+id/preview_container"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyleLarge"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:visibility="visible"
-        android:indeterminate="true"
-        android:elevation="10dp"
-        android:indeterminateTintMode="src_atop"
-        android:indeterminateTint="@color/Main_color_1" />
-
-    <ImageView
-        android:id="@+id/img_overlay_result"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#39000000"
-        android:contentDescription="@string/overlay_img"
-        android:elevation="10dp"
-        android:visibility="visible" />
+        android:background="@color/Main_color_2">
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:visibility="visible"
+            android:indeterminate="true"
+            android:elevation="10dp"
+            android:indeterminateTintMode="src_atop"
+            android:indeterminateTint="@color/Main_color_1" />
+
+        <ImageView
+            android:id="@+id/img_overlay_result"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#39000000"
+            android:contentDescription="@string/overlay_img"
+            android:elevation="10dp"
+            android:visibility="visible" />
+
+    </RelativeLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/detect_result"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
     </androidx.recyclerview.widget.RecyclerView>
 
-</RelativeLayout>
+</androidx.drawerlayout.widget.DrawerLayout>

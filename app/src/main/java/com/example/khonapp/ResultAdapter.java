@@ -11,10 +11,12 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -80,10 +82,16 @@ public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.ViewHolder
         String orientation = getOrientation(detect_img);
 
         if (orientation.equals("landscape")) {
-            FrameLayout.LayoutParams imageViewParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
+            FrameLayout.LayoutParams imageViewParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, 700);
+            RelativeLayout.LayoutParams cardLayout = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, 700);
+            cardLayout.setMarginStart(25);
+            cardLayout.setMarginEnd(25);
+            holder.cardView.setLayoutParams(cardLayout);
             holder.mImage.setLayoutParams(imageViewParams);
         } else if (orientation.equals("portrait")) {
             FrameLayout.LayoutParams imageViewParams = new FrameLayout.LayoutParams(1000, 1500);
+            RelativeLayout.LayoutParams cardLayout = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+            holder.cardView.setLayoutParams(cardLayout);
             holder.mImage.setLayoutParams(imageViewParams);
         }
 
@@ -136,6 +144,7 @@ public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.ViewHolder
 
         private TextView mTItle, mDescription, mGesture, mGestureDescription;
         private ImageView mImage;
+        private CardView cardView;
         private ProgressBar progressBar, progressBar_cha, progressBar_gesture;
 
         public ViewHolder(@NonNull View itemView) {
@@ -148,6 +157,7 @@ public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.ViewHolder
             mImage = itemView.findViewById(R.id.preview_img);
             mGesture = itemView.findViewById(R.id.resultGesture_title);
             mGestureDescription = itemView.findViewById(R.id.resultGesture_description);
+            cardView = itemView.findViewById(R.id.preview_img_container);
         }
     }
 }
