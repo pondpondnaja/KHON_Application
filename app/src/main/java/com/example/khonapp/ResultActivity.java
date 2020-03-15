@@ -16,20 +16,14 @@ import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.DataSource;
-import com.bumptech.glide.load.engine.GlideException;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -70,9 +64,9 @@ public class ResultActivity extends AppCompatActivity {
 
     private String img_path, img_real_path, previewPath, out_image;
 
-    private TextView mTItle, mDescription, mGesture, mGestureDescription;
-    private ImageView mImage;
-    private ProgressBar progressBar, progressBar_cha, progressBar_gesture;
+    private ImageView imageView;
+    private ProgressBar progressBar;
+    private RecyclerView recyclerView;
 
     Uri img_address;
     MainActivity mainActivity = new MainActivity();
@@ -85,31 +79,18 @@ public class ResultActivity extends AppCompatActivity {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
+        recyclerView = findViewById(R.id.detect_result);
+        progressBar = findViewById(R.id.progressBar);
+        imageView = findViewById(R.id.img_overlay_result);
+
         if (Build.VERSION.SDK_INT >= 23) {
             requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 2);
         }
 
-        progressBar = findViewById(R.id.progressBar);
-        progressBar_cha = findViewById(R.id.progressBar_cha);
-        progressBar_gesture = findViewById(R.id.progressBar_gesture);
-        mTItle = findViewById(R.id.result_title);
-        mDescription = findViewById(R.id.result_description);
-        mImage = findViewById(R.id.preview_img);
-        mGesture = findViewById(R.id.resultGesture_title);
-        mGestureDescription = findViewById(R.id.resultGesture_description);
-
         if (savedInstanceState == null) {
             progressBar.setVisibility(View.VISIBLE);
-            progressBar_cha.setVisibility(View.VISIBLE);
-            progressBar_gesture.setVisibility(View.VISIBLE);
-
-            mTItle.setText("");
-            mDescription.setText("");
-            mGesture.setText("");
-            mGestureDescription.setText("");
             progressBar.bringToFront();
-            progressBar_cha.bringToFront();
-            progressBar_gesture.bringToFront();
+            imageView.setVisibility(View.VISIBLE);
 
             Bundle extra = getIntent().getExtras();
             if (extra == null) {
@@ -118,9 +99,6 @@ public class ResultActivity extends AppCompatActivity {
                 img_path = extra.getString("img_path");
                 img_address = Uri.parse(img_path);
                 img_real_path = getPath(ResultActivity.this, img_address);
-                //progressBar.setVisibility(View.GONE);
-                //setData();
-
                 createBody();
             }
         }
@@ -144,8 +122,7 @@ public class ResultActivity extends AppCompatActivity {
 
         RequestBody postBodyImage = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
-                .addFormDataPart("file_input", "androidFlask.jpg",
-                        RequestBody.create(MediaType.parse("image/*jpg"), byteArray))
+                .addFormDataPart("file_input", "androidFlask.jpg", RequestBody.create(MediaType.parse("image/*jpg"), byteArray))
                 .addFormDataPart("app_check", "android")
                 .build();
 
@@ -187,10 +164,12 @@ public class ResultActivity extends AppCompatActivity {
                         Log.d(TAG, "onResponse: " + res.trim());
                         Log.d(TAG, "onResponse: PATH : " + img_address);
                         //setData();
-                        if (res.contains("www.herokucdn.com/error-pages/application-error.html")) {
+                        if (res.contains("www.herokucdn.com/error-pages/application-error.html") || res.contains("500")) {
                             Log.d(TAG, "onResponse: Error appear");
                             setData_Fail();
                         } else {
+                            progressBar.setVisibility(View.GONE);
+                            imageView.setVisibility(View.GONE);
                             initData(res);
                         }
                     } catch (IOException | JSONException e) {
@@ -228,69 +207,26 @@ public class ResultActivity extends AppCompatActivity {
                 model_id.add(model_idJ);
             }
 
-            setData();
+            initRecycleView();
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    public void setData() {
-        //Text
-        String string_builder_character = name + " " + score + " %";
-        String string_builder_gesture = gesture_name + " " + gesture_score + " %";
-
-        progressBar_cha.setVisibility(View.GONE);
-        progressBar_gesture.setVisibility(View.GONE);
-        mTItle.setText(string_builder_character);
-        //mDescription.setText(desc);
-        mGesture.setText(string_builder_gesture);
-        //mGestureDescription.setText(gestureDesc);
-        //Image
-        Log.d(TAG, "setPreviewImage: Image Path : " + img_real_path);
-        Bitmap bMap = BitmapFactory.decodeFile(img_real_path);
-        Log.d(TAG, "setData: Orientation : " + getOrientation(img_address));
-        Uri detect_img = Uri.parse(out_image);
-        String orientation = getOrientation(detect_img);
-
-        if (orientation.equals("landscape")) {
-            FrameLayout.LayoutParams imageViewParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
-            mImage.setLayoutParams(imageViewParams);
-        } else if (orientation.equals("portrait")) {
-            FrameLayout.LayoutParams imageViewParams = new FrameLayout.LayoutParams(1000, 1500);
-            mImage.setLayoutParams(imageViewParams);
-        }
-
-        String out_img_URL_Builder = URL.replace("/application", out_image.replace("\\/", "/"));
-
-        Glide.with(ResultActivity.this)
-                .asBitmap()
-                .load(out_img_URL_Builder)
-                .listener(new RequestListener<Bitmap>() {
-                    @Override
-                    public boolean onLoadFailed(GlideException e, Object model, Target<Bitmap> target, boolean isFirstResource) {
-                        Toast.makeText(ResultActivity.this, "Can't load image.", Toast.LENGTH_SHORT).show();
-                        Log.d(TAG, "onLoadFailed: Message : " + e);
-                        return false;
-                    }
-
-                    @Override
-                    public boolean onResourceReady(Bitmap resource, Object model, Target<Bitmap> target, DataSource dataSource, boolean isFirstResource) {
-                        progressBar.setVisibility(View.GONE);
-                        return false;
-                    }
-                })
-                .into(mImage);
-
-        //mImage.setImageURI(Uri.parse(out_image));
+    private void initRecycleView() {
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext(), RecyclerView.VERTICAL, false);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        ResultAdapter adapter = new ResultAdapter(name, desc, score, gesture_name, gesture_score, gestureDesc, out_img, model_id, ResultActivity.this, img_real_path);
+        recyclerView.setAdapter(adapter);
     }
 
     public void setData_Fail() {
         progressBar.setVisibility(View.GONE);
-        progressBar_cha.setVisibility(View.GONE);
-        progressBar_gesture.setVisibility(View.GONE);
+        //progressBar_cha.setVisibility(View.GONE);
+        //progressBar_gesture.setVisibility(View.GONE);
 
-        mTItle.setText("Memory leak please contact supporter.");
+        //mTItle.setText("Memory leak please contact supporter.");
     }
 
     private String getOrientation(Uri uri) {

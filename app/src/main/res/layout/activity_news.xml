@@ -19,7 +19,7 @@
         android:id="@+id/img_overlay_news"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#16000000"
+        android:background="#39000000"
         android:contentDescription="@string/overlay_img"
         android:elevation="10dp"
         android:visibility="visible" />

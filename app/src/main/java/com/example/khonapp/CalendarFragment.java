@@ -34,10 +34,10 @@ public class CalendarFragment extends Fragment {
     private static final String TAG = "FC";
     //private static final String URL = "http://192.168.1.43:5000/androidEvents";
     //private static final String URL = "http://192.168.64.2/3D/calendar.php";
-    private static final String URL = "https://utg-fansub.me/3D/calendar.php";
+    //private static final String URL = "https://utg-fansub.me/3D/calendar.php";
 
     //Real connect
-    //private static final String URL = "http://khon.itar.site/androidEvents";
+    private static final String URL = "http://khon.itar.site/show";
 
     private ArrayList<EventDay> events = new ArrayList<>();
     private ArrayList<String> year_month_day = new ArrayList<>();
