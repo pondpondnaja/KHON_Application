@@ -78,6 +78,8 @@ dependencies {
     implementation 'com.applandeo:material-calendar-view:1.7.0'
     //OkHttp
     implementation 'com.squareup.okhttp3:okhttp:3.12.1'
+    //Jsonp
+    implementation 'org.jsoup:jsoup:1.13.1'
 }
 
 sceneform.asset('sampledata/1227 Earth.obj',

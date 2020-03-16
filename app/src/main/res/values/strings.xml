@@ -30,7 +30,7 @@
     <!-- Demo text -->
     <string name="ar_toolbar">AR</string>
     <string name="news_toolbar">NEWS</string>
-    <string name="location">Location :</string>
+    <string name="location">สถานที่จัด :</string>
     <string name="event_list">event_list</string>
     <string name="contact_us">contact_us</string>
     <string name="camera">camera</string>
@@ -50,4 +50,6 @@
     <string name="detect_from_camera">Detect from camera</string>
     <string name="detect_from_gallery">Detect from gallery</string>
     <string name="news_slide_img">news_slide_img</string>
+    <string name="information">รายละเอียด</string>
+    <string name="more_info">อ่านเพิ่มเติม</string>
 </resources>

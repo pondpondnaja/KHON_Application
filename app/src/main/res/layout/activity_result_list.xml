@@ -3,8 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/Main_color_2"
-    android:layout_marginTop="8dp">
+    android:layout_marginTop="8dp"
+    android:background="@color/Main_color_2">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/layout_container"
@@ -33,12 +33,12 @@
                     style="?android:attr/progressBarStyleLarge"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:elevation="20dp"
                     android:layout_gravity="center_horizontal|center_vertical"
+                    android:elevation="20dp"
                     android:indeterminate="true"
-                    android:visibility="visible"
+                    android:indeterminateTint="@color/Main_color_1"
                     android:indeterminateTintMode="src_atop"
-                    android:indeterminateTint="@color/Main_color_1" />
+                    android:visibility="visible" />
 
                 <ImageView
                     android:id="@+id/preview_img"
@@ -57,8 +57,8 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/preview_img_container"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="10dp"
                 android:layout_marginStart="5dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginEnd="5dp"
                 app:cardBackgroundColor="@android:color/white"
                 app:cardCornerRadius="8dp">
@@ -68,12 +68,12 @@
                     style="?android:attr/progressBarStyleLarge"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:elevation="20dp"
                     android:layout_gravity="center_horizontal|center_vertical"
+                    android:elevation="20dp"
                     android:indeterminate="true"
-                    android:visibility="visible"
+                    android:indeterminateTint="@color/Main_color_1"
                     android:indeterminateTintMode="src_atop"
-                    android:indeterminateTint="@color/Main_color_1" />
+                    android:visibility="visible" />
 
                 <RelativeLayout
                     android:id="@+id/img_description_container"
@@ -86,13 +86,17 @@
                         android:layout_height="wrap_content"
                         android:layout_centerHorizontal="true"
                         android:layout_marginTop="15dp"
+                        android:background="@drawable/round_btn"
+                        android:gravity="center_vertical"
+                        android:paddingStart="5dp"
+                        android:paddingEnd="5dp"
                         android:text="@string/demo_text"
                         android:textColor="@color/all_text_color"
                         android:textSize="20sp" />
 
                     <TextView
                         android:id="@+id/result_description"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/result_title"
                         android:layout_marginTop="15dp"
@@ -112,10 +116,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/img_description__layout_container"
-                android:layout_marginTop="10dp"
-                android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp"
                 android:layout_centerHorizontal="true"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="5dp"
                 app:cardBackgroundColor="@android:color/white"
                 app:cardCornerRadius="8dp">
 
@@ -124,12 +128,12 @@
                     style="?android:attr/progressBarStyleLarge"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:elevation="20dp"
                     android:layout_gravity="center_horizontal|center_vertical"
+                    android:elevation="20dp"
                     android:indeterminate="true"
-                    android:visibility="visible"
+                    android:indeterminateTint="@color/Main_color_1"
                     android:indeterminateTintMode="src_atop"
-                    android:indeterminateTint="@color/Main_color_1" />
+                    android:visibility="visible" />
 
                 <RelativeLayout
                     android:id="@+id/img_gesture_container"
@@ -142,13 +146,17 @@
                         android:layout_height="wrap_content"
                         android:layout_centerHorizontal="true"
                         android:layout_marginTop="15dp"
+                        android:background="@drawable/round_btn"
+                        android:gravity="center_vertical"
+                        android:paddingStart="5dp"
+                        android:paddingEnd="5dp"
                         android:text="@string/demo_text"
                         android:textColor="@color/all_text_color"
                         android:textSize="20sp" />
 
                     <TextView
                         android:id="@+id/resultGesture_description"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/resultGesture_title"
                         android:layout_marginTop="15dp"
