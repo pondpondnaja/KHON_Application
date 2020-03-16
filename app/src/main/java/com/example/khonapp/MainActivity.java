@@ -5,7 +5,6 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.StrictMode;
@@ -44,6 +43,7 @@ public class MainActivity extends AppCompatActivity {//implements NavigationView
     private static final String TAG = "mainAc";
 
     private static final int PERMISSION_CODE = 1000;
+    private static final int PERMISSION_CODE_2 = 1001;
     private static final int IMAGE_CAPTURE_CODE = 1001;
     private static final int GALLERY_REQUEST_CODE = 1002;
     private static final int Limit = 4;
@@ -89,9 +89,7 @@ public class MainActivity extends AppCompatActivity {//implements NavigationView
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        if (Build.VERSION.SDK_INT >= 23) {
-            requestPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 2);
-        }
+        requestPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 2);
 
         fragmentManager = getSupportFragmentManager();
         toolbar = findViewById(R.id.toolbar);
@@ -283,39 +281,31 @@ public class MainActivity extends AppCompatActivity {//implements NavigationView
     }
 
     public void GalleryClick() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED ||
-                    checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
-                //permission not enabled, request it
-                String[] permission = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
-                //show popup to request permissions
-                requestPermissions(permission, PERMISSION_CODE);
-            } else {
-                //permission already granted
-                Intent intent = new Intent(Intent.ACTION_PICK);
-                intent.setType("image/*");
-                String[] mimeTypes = {"image/jpeg", "image/png"};
-                intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
-                startActivityForResult(intent, GALLERY_REQUEST_CODE);
-            }
+        if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED ||
+                checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
+            //permission not enabled, request it
+            String[] permission = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+            //show popup to request permissions
+            requestPermissions(permission, PERMISSION_CODE_2);
+        } else {
+            //permission already granted
+            Intent intent = new Intent(Intent.ACTION_PICK);
+            intent.setType("image/*");
+            String[] mimeTypes = {"image/jpeg", "image/png"};
+            intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
+            startActivityForResult(intent, GALLERY_REQUEST_CODE);
         }
     }
 
     public void CameraClick() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (checkSelfPermission(Manifest.permission.CAMERA) ==
-                    PackageManager.PERMISSION_DENIED ||
-                    checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
-                //permission not enabled, request it
-                String[] permission = {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
-                //show popup to request permissions
-                requestPermissions(permission, PERMISSION_CODE);
-            } else {
-                //permission already granted
-                openCamera();
-            }
+        if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED ||
+                checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
+            //permission not enabled, request it
+            String[] permission = {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
+            //show popup to request permissions
+            requestPermissions(permission, PERMISSION_CODE);
         } else {
-            //system os < marshmallow
+            //permission already granted
             openCamera();
         }
     }

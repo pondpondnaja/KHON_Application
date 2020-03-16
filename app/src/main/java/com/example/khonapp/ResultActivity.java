@@ -8,7 +8,6 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.StrictMode;
@@ -83,9 +82,7 @@ public class ResultActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar);
         imageView = findViewById(R.id.img_overlay_result);
 
-        if (Build.VERSION.SDK_INT >= 23) {
-            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 2);
-        }
+        requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 2);
 
         if (savedInstanceState == null) {
             progressBar.setVisibility(View.VISIBLE);
@@ -98,7 +95,7 @@ public class ResultActivity extends AppCompatActivity {
             } else {
                 img_path = extra.getString("img_path");
                 img_address = Uri.parse(img_path);
-                img_real_path = getPath(ResultActivity.this, img_address);
+                //img_real_path = getPath(ResultActivity.this, img_address);
                 createBody();
             }
         }
@@ -116,7 +113,14 @@ public class ResultActivity extends AppCompatActivity {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inPreferredConfig = Bitmap.Config.RGB_565;
 
-        Bitmap bitmap = BitmapFactory.decodeFile(img_real_path, options);
+        Bitmap bitmap = null;
+        try {
+            bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), img_address);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        assert bitmap != null;
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
         byte[] byteArray = stream.toByteArray();
 
