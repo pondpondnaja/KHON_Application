@@ -2,8 +2,6 @@ package com.example.khonapp;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,9 +39,9 @@ public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.ViewHolder
     private ArrayList<String> out_img = new ArrayList<>();
     private ArrayList<String> model_id = new ArrayList<>();
     private Context context;
-    private String img_real_path;
+    private int Bitmap_width, Bitmap_height;
 
-    public ResultAdapter(ArrayList<String> name, ArrayList<String> desc, ArrayList<String> score, ArrayList<String> gesture_name, ArrayList<String> gesture_score, ArrayList<String> gestureDesc, ArrayList<String> out_img, ArrayList<String> model_id, Context context, String img_real_path) {
+    public ResultAdapter(ArrayList<String> name, ArrayList<String> desc, ArrayList<String> score, ArrayList<String> gesture_name, ArrayList<String> gesture_score, ArrayList<String> gestureDesc, ArrayList<String> out_img, ArrayList<String> model_id, Context context, int Bitmap_width, int Bitmap_height) {
         this.name = name;
         this.desc = desc;
         this.score = score;
@@ -53,7 +51,8 @@ public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.ViewHolder
         this.out_img = out_img;
         this.model_id = model_id;
         this.context = context;
-        this.img_real_path = img_real_path;
+        this.Bitmap_width = Bitmap_width;
+        this.Bitmap_height = Bitmap_height;
     }
 
     @NonNull
@@ -77,9 +76,9 @@ public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.ViewHolder
         holder.mGesture.setText(string_builder_gesture);
         holder.mGestureDescription.setText(gestureDesc.get(position));
 
-        Bitmap bMap = BitmapFactory.decodeFile(img_real_path);
-        Uri detect_img = Uri.parse(out_img.get(position));
-        String orientation = getOrientation(detect_img);
+        String orientation = getOrientation(Bitmap_width, Bitmap_height);
+
+        Log.d(TAG, "onBindViewHolder: Orientation : " + orientation);
 
         if (orientation.equals("landscape")) {
             FrameLayout.LayoutParams imageViewParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, 700);
@@ -90,12 +89,10 @@ public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.ViewHolder
             holder.mImage.setLayoutParams(imageViewParams);
         } else if (orientation.equals("portrait")) {
             FrameLayout.LayoutParams imageViewParams = new FrameLayout.LayoutParams(1000, 1500);
-            RelativeLayout.LayoutParams cardLayout = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-            holder.cardView.setLayoutParams(cardLayout);
             holder.mImage.setLayoutParams(imageViewParams);
         }
 
-        String out_img_URL_Builder = URL.replace("/application", "") + out_img.get(position).replace("\\/", "/");
+        String out_img_URL_Builder = URL + out_img.get(position).replace("\\/", "/");
 
         Glide.with(context)
                 .asBitmap()
@@ -110,6 +107,7 @@ public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.ViewHolder
 
                     @Override
                     public boolean onResourceReady(Bitmap resource, Object model, Target<Bitmap> target, DataSource dataSource, boolean isFirstResource) {
+                        holder.mImage.setVisibility(View.VISIBLE);
                         holder.progressBar.setVisibility(View.GONE);
                         return false;
                     }
@@ -117,20 +115,16 @@ public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.ViewHolder
                 .into(holder.mImage);
     }
 
-    private String getOrientation(Uri uri) {
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
+    private String getOrientation(int Width, int Height) {
+
         String orientation = "landscape";
         try {
-            BitmapFactory.decodeFile(img_real_path, options);
-            int imageHeight = options.outHeight;
-            int imageWidth = options.outWidth;
-            Log.d(TAG, "getOrientation: H : " + imageHeight + " W : " + imageWidth);
-            if (imageHeight > imageWidth) {
+            Log.d(TAG, "getOrientation: H : " + Height + " W : " + Width);
+            if (Width < Height) {
                 orientation = "portrait";
             }
         } catch (Exception e) {
-            //Do nothing
+            e.printStackTrace();
         }
         return orientation;
     }

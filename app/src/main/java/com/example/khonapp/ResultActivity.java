@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -62,6 +63,7 @@ public class ResultActivity extends AppCompatActivity {
     private ArrayList<String> model_id = new ArrayList<>();
 
     private String img_path, img_real_path, previewPath, out_image;
+    private int Bitmap_width, Bitmap_height;
 
     private ImageView imageView;
     private ProgressBar progressBar;
@@ -96,6 +98,7 @@ public class ResultActivity extends AppCompatActivity {
                 img_path = extra.getString("img_path");
                 img_address = Uri.parse(img_path);
                 //img_real_path = getPath(ResultActivity.this, img_address);
+                //Log.d(TAG, "onCreate: IMG_Add : " + img_real_path);
                 createBody();
             }
         }
@@ -105,6 +108,21 @@ public class ResultActivity extends AppCompatActivity {
     public void finish() {
         super.finish();
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
+    }
+
+    public Bitmap getResizedBitmap(Bitmap image, int maxSize) {
+        int width = image.getWidth();
+        int height = image.getHeight();
+
+        float bitmapRatio = (float) width / (float) height;
+        if (bitmapRatio > 1) {
+            width = maxSize;
+            height = (int) (width / bitmapRatio);
+        } else {
+            height = maxSize;
+            width = (int) (height * bitmapRatio);
+        }
+        return Bitmap.createScaledBitmap(image, width, height, true);
     }
 
     public void createBody() {
@@ -119,9 +137,27 @@ public class ResultActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        int orientation = getOrientation(ResultActivity.this, img_address);
+        Matrix matrix = new Matrix();
+        matrix.postRotate(90);
 
         assert bitmap != null;
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+        Bitmap convertedImage = getResizedBitmap(bitmap, 700);
+
+        if (orientation == 90) {
+            bitmap = Bitmap.createBitmap(convertedImage, 0, 0, convertedImage.getWidth(), convertedImage.getHeight(), matrix, true);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+            Log.d(TAG, "createBody: Converted and ReCorrect orientation");
+        } else {
+            convertedImage.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+            Log.d(TAG, "createBody: Converted");
+        }
+
+        Bitmap_width = bitmap.getWidth();
+        Bitmap_height = bitmap.getHeight();
+
+        Log.d(TAG, "createBody: Orientation : " + orientation);
+        Log.d(TAG, "createBody: W : " + Bitmap_width + " H : " + Bitmap_height);
         byte[] byteArray = stream.toByteArray();
 
         RequestBody postBodyImage = new MultipartBody.Builder()
@@ -159,6 +195,7 @@ public class ResultActivity extends AppCompatActivity {
                     }
                 });
             }
+
             @Override
             public void onResponse(Call call, final Response response) {
                 appCompatActivity.runOnUiThread(() -> {
@@ -221,7 +258,7 @@ public class ResultActivity extends AppCompatActivity {
     private void initRecycleView() {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext(), RecyclerView.VERTICAL, false);
         recyclerView.setLayoutManager(linearLayoutManager);
-        ResultAdapter adapter = new ResultAdapter(name, desc, score, gesture_name, gesture_score, gestureDesc, out_img, model_id, ResultActivity.this, img_real_path);
+        ResultAdapter adapter = new ResultAdapter(name, desc, score, gesture_name, gesture_score, gestureDesc, out_img, model_id, ResultActivity.this, Bitmap_width, Bitmap_height);
         recyclerView.setAdapter(adapter);
     }
 
@@ -233,22 +270,18 @@ public class ResultActivity extends AppCompatActivity {
         //mTItle.setText("Memory leak please contact supporter.");
     }
 
-    private String getOrientation(Uri uri) {
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        String orientation = "landscape";
-        try {
-            BitmapFactory.decodeFile(img_real_path, options);
-            int imageHeight = options.outHeight;
-            int imageWidth = options.outWidth;
-            Log.d(TAG, "getOrientation: H : " + imageHeight + " W : " + imageWidth);
-            if (imageHeight > imageWidth) {
-                orientation = "portrait";
-            }
-        } catch (Exception e) {
-            //Do nothing
+    public static int getOrientation(Context context, Uri photoUri) {
+        /* it's on the external media. */
+        Cursor cursor = context.getContentResolver().query(photoUri,
+                new String[]{MediaStore.Images.ImageColumns.ORIENTATION}, null, null, null);
+
+        assert cursor != null;
+        if (cursor.getCount() != 1) {
+            return -1;
         }
-        return orientation;
+
+        cursor.moveToFirst();
+        return cursor.getInt(0);
     }
 
     private static String getPath(final Context context, final Uri uri) {

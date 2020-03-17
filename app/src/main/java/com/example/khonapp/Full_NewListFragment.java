@@ -39,7 +39,6 @@ public class Full_NewListFragment extends Fragment {
     private static final String URL = "http://khon.itar.site";
 
     private ArrayList<String> news_date = new ArrayList<>();
-    private ArrayList<String> news_desc = new ArrayList<>();
     private ArrayList<String> news_img = new ArrayList<>();
     private ArrayList<String> news_link = new ArrayList<>();
     private ArrayList<String> news_title = new ArrayList<>();
@@ -77,7 +76,6 @@ public class Full_NewListFragment extends Fragment {
     @Override
     public void onStop() {
         news_date.clear();
-        news_desc.clear();
         news_img.clear();
         news_link.clear();
         news_title.clear();
@@ -87,7 +85,6 @@ public class Full_NewListFragment extends Fragment {
     @Override
     public void onDestroy() {
         news_date.clear();
-        news_desc.clear();
         news_img.clear();
         news_link.clear();
         news_title.clear();
@@ -96,7 +93,7 @@ public class Full_NewListFragment extends Fragment {
 
     public void connectServer() {
 
-        if (!news_title.isEmpty() || !news_desc.isEmpty() || !news_img.isEmpty() || !news_date.isEmpty() || !news_link.isEmpty()) {
+        if (!news_title.isEmpty() || !news_img.isEmpty() || !news_date.isEmpty() || !news_link.isEmpty()) {
             return;
         }
 
@@ -157,13 +154,11 @@ public class Full_NewListFragment extends Fragment {
                 JSONObject obj = jsonArray.getJSONObject(i);
 
                 String news_dateJ = obj.getString("news_date");
-                String news_descJ = obj.getString("news_desc");
                 String news_imgJ = obj.getString("news_img");
                 String news_linkJ = obj.getString("news_link");
                 String news_titleJ = obj.getString("news_title");
 
                 news_date.add(news_dateJ);
-                news_desc.add(news_descJ);
                 news_img.add(news_imgJ);
                 news_link.add(news_linkJ);
                 news_title.add(news_titleJ);
@@ -179,7 +174,7 @@ public class Full_NewListFragment extends Fragment {
     private void initRecycleView() {
         layoutManager = new LinearLayoutManager(context, RecyclerView.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);
-        Full_NewViewAdapter adapter = new Full_NewViewAdapter(news_date, news_desc, news_img, news_link, news_title, context);
+        Full_NewViewAdapter adapter = new Full_NewViewAdapter(news_date, news_img, news_link, news_title, context);
         recyclerView.setAdapter(adapter);
     }
 }

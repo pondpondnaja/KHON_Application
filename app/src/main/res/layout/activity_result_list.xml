@@ -21,7 +21,7 @@
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/preview_img_container"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_marginStart="5dp"
@@ -43,7 +43,7 @@
                 <ImageView
                     android:id="@+id/preview_img"
                     android:layout_width="match_parent"
-                    android:layout_height="450dp"
+                    android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:contentDescription="@string/preview_image"
                     android:scaleType="fitXY" />

@@ -32,7 +32,6 @@ public class SlideRecycleViewAdapter extends RecyclerView.Adapter<SlideRecycleVi
     private static final int Slide_size = 4;
     //vars
     private ArrayList<String> news_date = new ArrayList<>();
-    private ArrayList<String> news_desc = new ArrayList<>();
     private ArrayList<String> news_img = new ArrayList<>();
     private ArrayList<String> news_link = new ArrayList<>();
     private ArrayList<String> news_title = new ArrayList<>();
@@ -42,9 +41,8 @@ public class SlideRecycleViewAdapter extends RecyclerView.Adapter<SlideRecycleVi
     Bundle bundle;
     View view;
 
-    public SlideRecycleViewAdapter(ArrayList<String> news_date, ArrayList<String> news_desc, ArrayList<String> news_img, ArrayList<String> news_link, ArrayList<String> news_title, Context mcontext, Activity mActivity) {
+    public SlideRecycleViewAdapter(ArrayList<String> news_date, ArrayList<String> news_img, ArrayList<String> news_link, ArrayList<String> news_title, Context mcontext, Activity mActivity) {
         this.news_date = news_date;
-        this.news_desc = news_desc;
         this.news_img = news_img;
         this.news_link = news_link;
         this.news_title = news_title;
@@ -104,8 +102,8 @@ public class SlideRecycleViewAdapter extends RecyclerView.Adapter<SlideRecycleVi
         }
 
         holder.parentLayout.setOnClickListener(view -> {
+
             Log.d(TAG, "onClick: click on image : " + news_title.get(position));
-            Toast.makeText(mcontext, news_title.get(position), Toast.LENGTH_SHORT).show();
 
             if (position == Slide_size) {
                 AppCompatActivity news_activity = (AppCompatActivity) view.getContext();

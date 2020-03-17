@@ -239,13 +239,11 @@ public class MainActivity extends AppCompatActivity {//implements NavigationView
                 JSONObject obj = jsonArray.getJSONObject(i);
 
                 String news_dateJ = obj.getString("news_date");
-                String news_descJ = obj.getString("news_desc");
                 String news_imgJ = obj.getString("news_img");
                 String news_linkJ = obj.getString("news_link");
                 String news_titleJ = obj.getString("news_title");
 
                 news_date.add(news_dateJ);
-                news_desc.add(news_descJ);
                 news_img.add(news_imgJ);
                 news_link.add(news_linkJ);
                 news_title.add(news_titleJ);
@@ -263,7 +261,7 @@ public class MainActivity extends AppCompatActivity {//implements NavigationView
         layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         recyclerView = findViewById(R.id.recycleview);
         recyclerView.setLayoutManager(layoutManager);
-        adapter = new SlideRecycleViewAdapter(news_date, news_desc, news_img, news_link, news_title, this, MainActivity.this);
+        adapter = new SlideRecycleViewAdapter(news_date, news_img, news_link, news_title, this, MainActivity.this);
         recyclerView.setHasFixedSize(false);
         recyclerView.setAdapter(adapter);
         //scrollable();

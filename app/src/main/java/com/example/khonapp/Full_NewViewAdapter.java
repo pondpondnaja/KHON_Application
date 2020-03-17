@@ -27,16 +27,14 @@ import java.util.ArrayList;
 public class Full_NewViewAdapter extends RecyclerView.Adapter<Full_NewViewAdapter.ViewHolder> {
     private static final String TAG = "NewAC";
     private ArrayList<String> news_date = new ArrayList<>();
-    private ArrayList<String> news_desc = new ArrayList<>();
     private ArrayList<String> news_img = new ArrayList<>();
     private ArrayList<String> news_link = new ArrayList<>();
     private ArrayList<String> news_title = new ArrayList<>();
     private Context mcontext;
     Bundle bundle;
 
-    public Full_NewViewAdapter(ArrayList<String> news_date, ArrayList<String> news_desc, ArrayList<String> news_img, ArrayList<String> news_link, ArrayList<String> news_title, Context mcontext) {
+    public Full_NewViewAdapter(ArrayList<String> news_date, ArrayList<String> news_img, ArrayList<String> news_link, ArrayList<String> news_title, Context mcontext) {
         this.news_date = news_date;
-        this.news_desc = news_desc;
         this.news_img = news_img;
         this.news_link = news_link;
         this.news_title = news_title;
