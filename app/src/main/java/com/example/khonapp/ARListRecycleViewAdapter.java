@@ -51,6 +51,7 @@ public class ARListRecycleViewAdapter extends RecyclerView.Adapter<ARListRecycle
             Toast.makeText(context, ARName.get(position) + " from folder : " + FolderName.get(position), Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(context, ARActivity.class);
             intent.putExtra("FolderName", FolderName.get(position));
+            intent.putExtra("gesture_name", ARName.get(position));
             context.startActivity(intent);
             mActivity.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         });

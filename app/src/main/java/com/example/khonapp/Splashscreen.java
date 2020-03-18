@@ -30,32 +30,30 @@ public class Splashscreen extends AppCompatActivity {
 
         handler = new Handler();
 
-        runnable = new Runnable() {
-            public void run() {
+        runnable = () -> {
 
-                Intent intent = new Intent(Splashscreen.this, MainActivity.class);
-                sp_txt.startAnimation(textmove_out);
+            Intent intent = new Intent(Splashscreen.this, MainActivity.class);
+            sp_txt.startAnimation(textmove_out);
 
-                textmove_out.setAnimationListener(new Animation.AnimationListener(){
-                    @Override
-                    public void onAnimationStart(Animation animation) {
+            textmove_out.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
 
-                    }
+                }
 
-                    @Override
-                    public void onAnimationEnd(Animation animation){
-                        sp_txt.setVisibility(View.GONE);
-                        startActivity(intent);
-                        overridePendingTransition(R.anim.fade_in,R.anim.slide_out_left);
-                        finish();
-                    }
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    sp_txt.setVisibility(View.GONE);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.fade_in, R.anim.text_fade_out);
+                    finish();
+                }
 
-                    @Override
-                    public void onAnimationRepeat(Animation animation) {
+                @Override
+                public void onAnimationRepeat(Animation animation) {
 
-                    }
-                });
-            }
+                }
+            });
         };
     }
 

@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Bundle;
@@ -99,7 +98,7 @@ public class ResultActivity extends AppCompatActivity {
                 img_address = Uri.parse(img_path);
                 //img_real_path = getPath(ResultActivity.this, img_address);
                 //Log.d(TAG, "onCreate: IMG_Add : " + img_real_path);
-                createBody();
+                createDetectionBody();
             }
         }
     }
@@ -125,11 +124,9 @@ public class ResultActivity extends AppCompatActivity {
         return Bitmap.createScaledBitmap(image, width, height, true);
     }
 
-    public void createBody() {
+    public void createDetectionBody() {
 
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inPreferredConfig = Bitmap.Config.RGB_565;
 
         Bitmap bitmap = null;
         try {
@@ -137,6 +134,7 @@ public class ResultActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         int orientation = getOrientation(ResultActivity.this, img_address);
         Matrix matrix = new Matrix();
         matrix.postRotate(90);
@@ -377,7 +375,7 @@ public class ResultActivity extends AppCompatActivity {
             case PERMISSION_CODE: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     //permission from popup was granted
-                    createBody();
+                    createDetectionBody();
                 } else {
                     //permission from popup was denied
                     Toast.makeText(this, "Permission denied...", Toast.LENGTH_SHORT).show();

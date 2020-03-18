@@ -116,7 +116,7 @@ public class SlideRecycleViewAdapter extends RecyclerView.Adapter<SlideRecycleVi
                 bundle = new Bundle();
                 bundle.putString("news_link", news_link.get(position));
                 bundle.putString("news_img_link", news_img.get(position));
-                bundle.putString("new_title", news_title.get(position));
+                bundle.putString("news_title", news_title.get(position));
                 bundle.putString("from", "main");
 
                 NewFragment newFragment = new NewFragment();

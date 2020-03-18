@@ -20,7 +20,6 @@
         android:text="@string/dummy_text"
         android:textColor="@color/all_text_color"
         android:layout_centerHorizontal="true"
-        android:textAlignment="center"
         android:textSize="25sp"
         android:textStyle="bold"
         android:elevation="4dp"
@@ -36,7 +35,8 @@
         android:layout_width="match_parent"
         android:layout_below="@id/ar_header"
         app:cardCornerRadius="8dp"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="#FFFFFF">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/ar_recycleview"

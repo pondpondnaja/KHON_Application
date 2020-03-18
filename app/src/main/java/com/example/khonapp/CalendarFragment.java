@@ -97,6 +97,9 @@ public class CalendarFragment extends Fragment {
         View bottomSheet = view.findViewById(R.id.bottom_sheet);
         mBottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
 
+        text_location.setVisibility(View.GONE);
+        location_t.setVisibility(View.GONE);
+
         calendarView.setOnDayClickListener(eventDay -> {
             int i;
             boolean match = false;
@@ -397,8 +400,8 @@ public class CalendarFragment extends Fragment {
         }
         calendarView.setEvents(events);
 
-        String URL_Builder;
         boolean match = false;
+
         int date = calendarView.getFirstSelectedDate().get(Calendar.DATE);
         int month = calendarView.getFirstSelectedDate().get(Calendar.MONTH);
         int year = calendarView.getFirstSelectedDate().get(Calendar.YEAR);
@@ -441,5 +444,4 @@ public class CalendarFragment extends Fragment {
             event_img.setVisibility(View.GONE);
         }
     }
-
 }

@@ -76,11 +76,12 @@ public class ARFragment extends Fragment {
         FolderName.add("Cry");
         FolderName.add("Shy");
         FolderName.add("Smile");
-        FolderName.add("Am");
-        FolderName.add("Angry");
-        FolderName.add("Cry");
-        FolderName.add("Shy");
-        FolderName.add("Smile");
+
+        FolderName.add("Love");
+        FolderName.add("Ignore");
+        FolderName.add("Dead");
+        FolderName.add("Mighty");
+        FolderName.add("There");
     }
 
 }

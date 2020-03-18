@@ -16,6 +16,7 @@
             android:layout_marginStart="5dp"
             android:layout_marginTop="5dp"
             android:layout_marginEnd="5dp"
+            app:cardBackgroundColor="#FFFFFF"
             app:cardCornerRadius="6dp">
 
             <RelativeLayout
@@ -28,11 +29,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
-                    android:visibility="visible"
-                    android:indeterminate="true"
                     android:elevation="5dp"
+                    android:indeterminate="true"
+                    android:indeterminateTint="@color/Main_color_1"
                     android:indeterminateTintMode="src_atop"
-                    android:indeterminateTint="@color/Main_color_1" />
+                    android:visibility="visible" />
 
                 <ImageView
                     android:id="@+id/img_news"
@@ -53,6 +54,7 @@
             android:layout_marginStart="5dp"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="5dp"
+            app:cardBackgroundColor="#FFFFFF"
             app:cardCornerRadius="6dp">
 
             <RelativeLayout
@@ -63,20 +65,35 @@
                     android:id="@+id/text_news_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="5dp"
-                    android:layout_marginTop="5dp"
-                    android:textStyle="bold"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
                     android:text="@string/demo_text"
                     android:textColor="@color/all_text_color"
-                    android:textSize="20dp" />
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/line_2"
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:layout_below="@id/text_news_title"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="5dp"
+                    android:background="@color/all_text_color"
+                    android:textColor="@color/all_text_color"
+                    android:textSize="20sp" />
 
                 <TextView
                     android:id="@+id/text_news"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="5dp"
+                    android:layout_below="@id/line_2"
+                    android:layout_marginStart="10dp"
                     android:layout_marginTop="8dp"
-                    android:layout_below="@id/text_news_title"
+                    android:layout_marginEnd="10dp"
                     android:text="@string/demo_text"
                     android:textColor="@color/all_text_color"
                     android:textSize="18sp" />
@@ -84,12 +101,13 @@
                 <androidx.cardview.widget.CardView
                     android:id="@+id/img_new_2_holder"
                     android:layout_width="match_parent"
-                    android:layout_height="170dp"
+                    android:layout_height="200dp"
                     android:layout_below="@id/text_news"
                     android:layout_marginStart="20dp"
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="20dp"
                     android:layout_marginBottom="10dp"
+                    app:cardBackgroundColor="#FFFFFF"
                     app:cardCornerRadius="6dp">
 
                     <ProgressBar
@@ -98,11 +116,11 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical|center_horizontal"
-                        android:visibility="visible"
-                        android:indeterminate="true"
                         android:elevation="5dp"
+                        android:indeterminate="true"
+                        android:indeterminateTint="@color/Main_color_1"
                         android:indeterminateTintMode="src_atop"
-                        android:indeterminateTint="@color/Main_color_1" />
+                        android:visibility="visible" />
 
                     <ImageView
                         android:id="@+id/img_news_2"
@@ -119,7 +137,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/img_new_2_holder"
-                    android:padding="5dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
                     android:text="@string/demo_text"
                     android:textColor="@color/all_text_color"
                     android:textSize="18sp" />

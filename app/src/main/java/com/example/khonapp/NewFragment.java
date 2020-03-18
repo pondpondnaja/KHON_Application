@@ -77,12 +77,12 @@ public class NewFragment extends Fragment {
             check_where = bundle.getString("from");
         }
 
-        getData();
-        Log.d(TAG, "onCreateView: Link : " + news_link);
+        getNewsData();
+        Log.d(TAG, "onCreateView: Link : " + news_title);
         return view;
     }
 
-    private void getData() {
+    private void getNewsData() {
 
         AppCompatActivity appCompatActivity = new AppCompatActivity();
         OkHttpClient client = mainActivity.client.newBuilder().build();

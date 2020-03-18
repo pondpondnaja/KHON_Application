@@ -54,6 +54,7 @@ public class ARActivity extends AppCompatActivity implements View.OnClickListene
     private String FolderName = "";
     private String model_url = "";
     private String description = "";
+    private String gesture_name;
 
     private BottomSheetBehavior mBottomSheetBehavior;
     private TextView mTextViewState, mTextInfo;
@@ -107,8 +108,10 @@ public class ARActivity extends AppCompatActivity implements View.OnClickListene
                 Bundle extras = getIntent().getExtras();
                 if (extras == null) {
                     FolderName = null;
+                    gesture_name = null;
                 } else {
                     FolderName = extras.getString("FolderName");
+                    gesture_name = extras.getString("gesture_name");
                     Log.d(TAG, "onCreate: FolderName : " + FolderName);
                 }
             } else {
@@ -143,32 +146,8 @@ public class ARActivity extends AppCompatActivity implements View.OnClickListene
                 moreInfo.setBackgroundTintList(getResources().getColorStateList(R.color.Main_color_2, getApplicationContext().getTheme()));
                 mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
 
-                switch (FolderName) {
-                    case "Am":
-                        mTextViewState.setText("ท่าฉัน");
-                        mTextInfo.setText(description);
-                        break;
-
-                    case "Angry":
-                        mTextViewState.setText("ท่าโกรธ");
-                        mTextInfo.setText(description);
-                        break;
-
-                    case "Cry":
-                        mTextViewState.setText("ท่าร้องไห้");
-                        mTextInfo.setText(description);
-                        break;
-
-                    case "Shy":
-                        mTextViewState.setText("ท่าเขิน");
-                        mTextInfo.setText(description);
-                        break;
-
-                    case "Smile":
-                        mTextViewState.setText("ท่ายิ้ม");
-                        mTextInfo.setText(description);
-                        break;
-                }
+                mTextViewState.setText(gesture_name);
+                mTextInfo.setText(description);
 
             } else {
                 mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);

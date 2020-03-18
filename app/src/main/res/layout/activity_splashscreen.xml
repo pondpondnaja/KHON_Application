@@ -16,25 +16,13 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true">
 
-        <TextView
-            android:id="@+id/sp_text1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/sp_text1"
-            android:textSize="50sp"
-            android:textColor="@color/sp_text"
-            android:layout_centerHorizontal="true"/>
-
-        <TextView
-            android:id="@+id/sp_text2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/sp_text1"
-            android:text="@string/sp_text2"
-            android:textSize="50sp"
-            android:textColor="@color/sp_text"
-            android:layout_marginTop="10dp"
-            android:layout_centerHorizontal="true"/>
+        <ImageView
+            android:id="@+id/splash_logo"
+            android:contentDescription="@string/logo"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:src="@drawable/k_icon_new"
+            android:scaleType="fitXY" />
 
     </RelativeLayout>
 
