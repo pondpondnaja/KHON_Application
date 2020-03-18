@@ -80,7 +80,11 @@ public class Full_NewViewAdapter extends RecyclerView.Adapter<Full_NewViewAdapte
 
                 bundle = new Bundle();
                 bundle.putString("news_link", news_link.get(position));
+                bundle.putString("news_img_link", news_img.get(position));
+                bundle.putString("news_title", news_title.get(position));
                 bundle.putString("from", "list");
+
+                Log.d(TAG, "onClick: IMG_Link : " + news_link.get(position));
 
                 NewFragment newFragment = new NewFragment();
                 newFragment.setArguments(bundle);

@@ -142,7 +142,7 @@ public class ResultActivity extends AppCompatActivity {
         matrix.postRotate(90);
 
         assert bitmap != null;
-        Bitmap convertedImage = getResizedBitmap(bitmap, 700);
+        Bitmap convertedImage = getResizedBitmap(bitmap, 500);
 
         if (orientation == 90) {
             bitmap = Bitmap.createBitmap(convertedImage, 0, 0, convertedImage.getWidth(), convertedImage.getHeight(), matrix, true);

@@ -19,7 +19,6 @@
         android:text="@string/dummy_text"
         android:textColor="@color/all_text_color"
         android:layout_centerHorizontal="true"
-        android:textAlignment="center"
         android:textSize="25sp"
         android:textStyle="bold"
         android:elevation="4dp"
@@ -36,6 +35,18 @@
         android:layout_below="@id/ar_header"
         app:cardCornerRadius="8dp"
         android:layout_height="match_parent">
+
+        <ProgressBar
+            android:id="@+id/progressBar_news"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:elevation="20dp"
+            android:indeterminate="true"
+            android:indeterminateTint="@color/Main_color_1"
+            android:indeterminateTintMode="src_atop"
+            android:visibility="visible" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/news_fullList_view"

@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,6 +49,7 @@ public class Full_NewListFragment extends Fragment {
     TextView news_toolbars;
     AppCompatActivity news_activity;
     Context context;
+    private ProgressBar progressBar;
     MainActivity mainActivity = new MainActivity();
 
     @Override
@@ -61,6 +63,7 @@ public class Full_NewListFragment extends Fragment {
         context = view.getContext();
         news_toolbars = view.findViewById(R.id.news_toolbar);
         recyclerView = view.findViewById(R.id.news_fullList_view);
+        progressBar = view.findViewById(R.id.progressBar_news);
 
         news_toolbars.setText(getResources().getText(R.string.news_toolbar));
         return view;
@@ -91,7 +94,9 @@ public class Full_NewListFragment extends Fragment {
         super.onDestroy();
     }
 
-    public void connectServer() {
+    private void connectServer() {
+
+        progressBar.setVisibility(View.VISIBLE);
 
         if (!news_title.isEmpty() || !news_img.isEmpty() || !news_date.isEmpty() || !news_link.isEmpty()) {
             return;
@@ -164,6 +169,7 @@ public class Full_NewListFragment extends Fragment {
                 news_title.add(news_titleJ);
             }
 
+            progressBar.setVisibility(View.GONE);
             initRecycleView();
 
         } catch (JSONException e) {
