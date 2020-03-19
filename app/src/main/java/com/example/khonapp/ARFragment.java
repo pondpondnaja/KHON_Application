@@ -20,23 +20,17 @@ public class ARFragment extends Fragment {
     private ArrayList<String> ARName = new ArrayList<>();
     private ArrayList<String> FolderName = new ArrayList<>();
 
-    LinearLayoutManager layoutManager;
-    RecyclerView recyclerView;
-
-    TextView textView;
-    Context context;
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
-        final View view =  inflater.inflate(R.layout.fragment_ar,container,false);
-        context = view.getContext();
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        final View view = inflater.inflate(R.layout.fragment_ar, container, false);
+        Context context = view.getContext();
 
-        //initData();
-        textView      = view.findViewById(R.id.ar_toolbar);
-        recyclerView  = view.findViewById(R.id.ar_recycleview);
-        layoutManager = new LinearLayoutManager(context,RecyclerView.VERTICAL,false);
+        TextView textView = view.findViewById(R.id.ar_toolbar);
+        RecyclerView recyclerView = view.findViewById(R.id.ar_recycleview);
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(context, RecyclerView.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);
-        ARListRecycleViewAdapter adapter = new ARListRecycleViewAdapter(getActivity(),context,ARName,FolderName);
+        ARListRecycleViewAdapter adapter = new ARListRecycleViewAdapter(getActivity(), context, ARName, FolderName);
         recyclerView.setAdapter(adapter);
 
         textView.setText(getResources().getString(R.string.ar_toolbar));
@@ -44,7 +38,7 @@ public class ARFragment extends Fragment {
     }
 
     @Override
-    public void onStart(){
+    public void onStart() {
         Log.d(TAG, "onStart: Initial data");
         initData();
         super.onStart();

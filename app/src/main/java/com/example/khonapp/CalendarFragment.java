@@ -103,7 +103,6 @@ public class CalendarFragment extends Fragment {
         calendarView.setOnDayClickListener(eventDay -> {
             int i;
             boolean match = false;
-            String URL_Builder;
             String date = String.valueOf(eventDay.getCalendar().get(Calendar.DATE));
             String month_r = String.valueOf(eventDay.getCalendar().get(Calendar.MONTH));
             String year_r = String.valueOf(eventDay.getCalendar().get(Calendar.YEAR));
@@ -231,7 +230,7 @@ public class CalendarFragment extends Fragment {
 
         client.newCall(request).enqueue(new Callback() {
             @Override
-            public void onFailure(Call call, IOException e) {
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 call.cancel();
                 appCompatActivity.runOnUiThread(() -> {
                     try {
@@ -244,7 +243,7 @@ public class CalendarFragment extends Fragment {
             }
 
             @Override
-            public void onResponse(Call call, final Response response) {
+            public void onResponse(@NonNull Call call, @NonNull final Response response) {
                 appCompatActivity.runOnUiThread(() -> {
                     try {
                         assert response.body() != null;
@@ -317,7 +316,7 @@ public class CalendarFragment extends Fragment {
 
         client.newCall(request).enqueue(new Callback() {
             @Override
-            public void onFailure(Call call, IOException e) {
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 call.cancel();
                 appCompatActivity.runOnUiThread(() -> {
                     try {
@@ -329,7 +328,7 @@ public class CalendarFragment extends Fragment {
             }
 
             @Override
-            public void onResponse(Call call, final Response response) throws IOException {
+            public void onResponse(@NonNull Call call, @NonNull final Response response) throws IOException {
                 assert response.body() != null;
                 String res = response.body().string();
                 Document document = Jsoup.parse(res);
@@ -355,7 +354,7 @@ public class CalendarFragment extends Fragment {
 
         client.newCall(request).enqueue(new Callback() {
             @Override
-            public void onFailure(Call call, IOException e) {
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 call.cancel();
                 appCompatActivity.runOnUiThread(() -> {
                     try {
@@ -367,7 +366,7 @@ public class CalendarFragment extends Fragment {
             }
 
             @Override
-            public void onResponse(Call call, final Response response) throws IOException {
+            public void onResponse(@NonNull Call call, @NonNull final Response response) throws IOException {
                 assert response.body() != null;
                 String res = response.body().string();
                 Document document = Jsoup.parse(res);

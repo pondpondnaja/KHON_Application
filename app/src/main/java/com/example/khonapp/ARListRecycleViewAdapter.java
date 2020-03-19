@@ -16,16 +16,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-public class ARListRecycleViewAdapter extends RecyclerView.Adapter<ARListRecycleViewAdapter.ViewHolder>{
+public class ARListRecycleViewAdapter extends RecyclerView.Adapter<ARListRecycleViewAdapter.ViewHolder> {
 
     private static final String TAG = "ARRecycle";
 
     private Context context;
     private Activity mActivity;
-    private ArrayList<String> ARName = new ArrayList<>();
-    private ArrayList<String> FolderName = new ArrayList<>();
+    private ArrayList<String> ARName;
+    private ArrayList<String> FolderName;
 
-    public ARListRecycleViewAdapter(Activity mActivity, Context context, ArrayList<String> ARName, ArrayList<String> folderName) {
+    ARListRecycleViewAdapter(Activity mActivity, Context context, ArrayList<String> ARName, ArrayList<String> folderName) {
         this.mActivity = mActivity;
         this.context = context;
         this.ARName = ARName;
@@ -36,7 +36,7 @@ public class ARListRecycleViewAdapter extends RecyclerView.Adapter<ARListRecycle
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Log.d(TAG, "onCreateViewHolder:  called");
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.ar_list_layout,parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.ar_list_layout, parent, false);
         return new ViewHolder(view);
     }
 
@@ -62,12 +62,12 @@ public class ARListRecycleViewAdapter extends RecyclerView.Adapter<ARListRecycle
         return ARName.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    static class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView text;
         CardView parentLayout;
 
-        public ViewHolder(View itemView) {
+        ViewHolder(View itemView) {
             super(itemView);
             text = itemView.findViewById(R.id.ar_text_view);
             parentLayout = itemView.findViewById(R.id.parent_layout);

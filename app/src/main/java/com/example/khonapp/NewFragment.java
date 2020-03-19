@@ -7,12 +7,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
@@ -45,7 +45,6 @@ public class NewFragment extends Fragment {
     private String check_where;
     private Context context;
     private ProgressBar progressBar_1, progressBar_2;
-    private WebView webView;
     private ImageView imageView, imageView_2;
     private TextView textView, textView_2, text_news_title;
     private CardView cardView;
@@ -92,7 +91,7 @@ public class NewFragment extends Fragment {
 
         client.newCall(request).enqueue(new Callback() {
             @Override
-            public void onFailure(Call call, IOException e) {
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 call.cancel();
                 appCompatActivity.runOnUiThread(() -> {
                     try {
@@ -105,7 +104,7 @@ public class NewFragment extends Fragment {
             }
 
             @Override
-            public void onResponse(Call call, final Response response) {
+            public void onResponse(@NonNull Call call, @NonNull final Response response) {
                 appCompatActivity.runOnUiThread(() -> {
                     try {
                         assert response.body() != null;

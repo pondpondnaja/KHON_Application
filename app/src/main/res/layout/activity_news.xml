@@ -103,10 +103,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="200dp"
                     android:layout_below="@id/text_news"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginBottom="10dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="15dp"
                     app:cardBackgroundColor="#FFFFFF"
                     app:cardCornerRadius="6dp">
 

@@ -10,6 +10,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -44,24 +45,22 @@ public class Full_NewListFragment extends Fragment {
     private ArrayList<String> news_link = new ArrayList<>();
     private ArrayList<String> news_title = new ArrayList<>();
 
-    LinearLayoutManager layoutManager;
-    RecyclerView recyclerView;
-    TextView news_toolbars;
-    AppCompatActivity news_activity;
-    Context context;
+    private RecyclerView recyclerView;
+    private Context context;
     private ProgressBar progressBar;
-    MainActivity mainActivity = new MainActivity();
+    private MainActivity mainActivity = new MainActivity();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView: CreateView called");
         final View view = inflater.inflate(R.layout.fragment_full_new, container, false);
 
-        news_activity = (AppCompatActivity) view.getContext();
+        AppCompatActivity news_activity = (AppCompatActivity) view.getContext();
         Objects.requireNonNull(news_activity.getSupportActionBar()).hide();
 
+        TextView news_toolbars = view.findViewById(R.id.news_toolbar);
+
         context = view.getContext();
-        news_toolbars = view.findViewById(R.id.news_toolbar);
         recyclerView = view.findViewById(R.id.news_fullList_view);
         progressBar = view.findViewById(R.id.progressBar_news);
 
@@ -116,7 +115,7 @@ public class Full_NewListFragment extends Fragment {
 
         cus_client.newCall(request).enqueue(new Callback() {
             @Override
-            public void onFailure(Call call, IOException e) {
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 call.cancel();
                 appCompatActivity.runOnUiThread(() -> {
                     try {
@@ -129,7 +128,7 @@ public class Full_NewListFragment extends Fragment {
             }
 
             @Override
-            public void onResponse(Call call, final Response response) {
+            public void onResponse(@NonNull Call call, @NonNull final Response response) {
                 appCompatActivity.runOnUiThread(() -> {
                     try {
                         assert response.body() != null;
@@ -150,7 +149,7 @@ public class Full_NewListFragment extends Fragment {
         });
     }
 
-    public void initData(String response) throws JSONException {
+    private void initData(String response) throws JSONException {
         //Log.d(TAG, "initData: Response JSON : "+response.toString());
         JSONArray jsonArray = new JSONArray(response);
         try {
@@ -178,9 +177,9 @@ public class Full_NewListFragment extends Fragment {
     }
 
     private void initRecycleView() {
-        layoutManager = new LinearLayoutManager(context, RecyclerView.VERTICAL, false);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(context, RecyclerView.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);
-        Full_NewViewAdapter adapter = new Full_NewViewAdapter(news_date, news_img, news_link, news_title, context);
+        Full_NewViewAdapter adapter = new Full_NewViewAdapter(news_img, news_link, news_title, context);
         recyclerView.setAdapter(adapter);
     }
 }

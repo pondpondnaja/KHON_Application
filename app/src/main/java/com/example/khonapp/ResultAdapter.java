@@ -30,18 +30,17 @@ public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.ViewHolder
     private static final String TAG = "ResultAP";
     private static final String URL = "http://khon.itar.site";
 
-    private ArrayList<String> name = new ArrayList<>();
-    private ArrayList<String> desc = new ArrayList<>();
-    private ArrayList<String> score = new ArrayList<>();
-    private ArrayList<String> gesture_name = new ArrayList<>();
-    private ArrayList<String> gesture_score = new ArrayList<>();
-    private ArrayList<String> gestureDesc = new ArrayList<>();
-    private ArrayList<String> out_img = new ArrayList<>();
-    private ArrayList<String> model_id = new ArrayList<>();
+    private ArrayList<String> name;
+    private ArrayList<String> desc;
+    private ArrayList<String> score;
+    private ArrayList<String> gesture_name;
+    private ArrayList<String> gesture_score;
+    private ArrayList<String> gestureDesc;
+    private ArrayList<String> out_img;
     private Context context;
     private int Bitmap_width, Bitmap_height;
 
-    public ResultAdapter(ArrayList<String> name, ArrayList<String> desc, ArrayList<String> score, ArrayList<String> gesture_name, ArrayList<String> gesture_score, ArrayList<String> gestureDesc, ArrayList<String> out_img, ArrayList<String> model_id, Context context, int Bitmap_width, int Bitmap_height) {
+    ResultAdapter(ArrayList<String> name, ArrayList<String> desc, ArrayList<String> score, ArrayList<String> gesture_name, ArrayList<String> gesture_score, ArrayList<String> gestureDesc, ArrayList<String> out_img, Context context, int Bitmap_width, int Bitmap_height) {
         this.name = name;
         this.desc = desc;
         this.score = score;
@@ -49,7 +48,6 @@ public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.ViewHolder
         this.gesture_score = gesture_score;
         this.gestureDesc = gestureDesc;
         this.out_img = out_img;
-        this.model_id = model_id;
         this.context = context;
         this.Bitmap_width = Bitmap_width;
         this.Bitmap_height = Bitmap_height;
@@ -65,13 +63,12 @@ public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.ViewHolder
     @Override
     public void onBindViewHolder(@NonNull ResultAdapter.ViewHolder holder, int position) {
 
-        String Uri_builder = URL + out_img.get(position);
         String string_builder_character = name.get(position) + " " + score.get(position) + " %";
         String string_builder_gesture = gesture_name.get(position) + " " + gesture_score.get(position) + " %";
 
         holder.progressBar_cha.setVisibility(View.GONE);
         holder.progressBar_gesture.setVisibility(View.GONE);
-        holder.mTItle.setText(string_builder_character);
+        holder.mTitle.setText(string_builder_character);
         holder.mDescription.setText(desc.get(position));
         holder.mGesture.setText(string_builder_gesture);
         holder.mGestureDescription.setText(gestureDesc.get(position));
@@ -134,19 +131,19 @@ public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.ViewHolder
         return name.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    static class ViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView mTItle, mDescription, mGesture, mGestureDescription;
+        private TextView mTitle, mDescription, mGesture, mGestureDescription;
         private ImageView mImage;
         private CardView cardView;
         private ProgressBar progressBar, progressBar_cha, progressBar_gesture;
 
-        public ViewHolder(@NonNull View itemView) {
+        private ViewHolder(@NonNull View itemView) {
             super(itemView);
             progressBar = itemView.findViewById(R.id.progressBar);
             progressBar_cha = itemView.findViewById(R.id.progressBar_cha);
             progressBar_gesture = itemView.findViewById(R.id.progressBar_gesture);
-            mTItle = itemView.findViewById(R.id.result_title);
+            mTitle = itemView.findViewById(R.id.result_title);
             mDescription = itemView.findViewById(R.id.result_description);
             mImage = itemView.findViewById(R.id.preview_img);
             mGesture = itemView.findViewById(R.id.resultGesture_title);

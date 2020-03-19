@@ -1,6 +1,5 @@
 package com.example.khonapp;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -25,29 +24,27 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class SlideRecycleViewAdapter extends RecyclerView.Adapter<SlideRecycleViewAdapter.ViewHolder> {
 
     private static final String TAG = "SlideRecycleView";
     private static final int Slide_size = 4;
     //vars
-    private ArrayList<String> news_date = new ArrayList<>();
-    private ArrayList<String> news_img = new ArrayList<>();
-    private ArrayList<String> news_link = new ArrayList<>();
-    private ArrayList<String> news_title = new ArrayList<>();
+    private ArrayList<String> news_date;
+    private ArrayList<String> news_img;
+    private ArrayList<String> news_link;
+    private ArrayList<String> news_title;
 
-    private Context mcontext;
-    private Activity mActivity;
-    Bundle bundle;
-    View view;
+    private Context mContext;
+    private Bundle bundle;
 
-    public SlideRecycleViewAdapter(ArrayList<String> news_date, ArrayList<String> news_img, ArrayList<String> news_link, ArrayList<String> news_title, Context mcontext, Activity mActivity) {
+    SlideRecycleViewAdapter(ArrayList<String> news_date, ArrayList<String> news_img, ArrayList<String> news_link, ArrayList<String> news_title, Context mContext) {
         this.news_date = news_date;
         this.news_img = news_img;
         this.news_link = news_link;
         this.news_title = news_title;
-        this.mcontext = mcontext;
-        this.mActivity = mActivity;
+        this.mContext = mContext;
     }
 
     @Override
@@ -64,6 +61,7 @@ public class SlideRecycleViewAdapter extends RecyclerView.Adapter<SlideRecycleVi
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Log.d(TAG, "onCreateViewHolder:  called View Type : " + viewType);
+        View view;
         if (viewType == 2) {
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_list_lastitem, parent, false);
         } else {
@@ -78,17 +76,17 @@ public class SlideRecycleViewAdapter extends RecyclerView.Adapter<SlideRecycleVi
         Log.d(TAG, "onBindViewHolder: ImgURL : " + news_img.get(position));
         //Set image
         if (position == getItemCount() - 1) {
-            Glide.with(mcontext)
+            Glide.with(mContext)
                     .load(R.drawable.ic_play_circle_outline_black_24dp)
                     .into(holder.img);
         } else {
-            Glide.with(mcontext)
+            Glide.with(mContext)
                     .asBitmap()
                     .load(news_img.get(position))
                     .listener(new RequestListener<Bitmap>() {
                         @Override
                         public boolean onLoadFailed(GlideException e, Object model, Target<Bitmap> target, boolean isFirstResource) {
-                            Toast.makeText(mcontext, "Can't load image.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(mContext, "Can't load image.", Toast.LENGTH_SHORT).show();
                             Log.d(TAG, "onLoadFailed: Message : " + e);
                             return false;
                         }
@@ -107,7 +105,7 @@ public class SlideRecycleViewAdapter extends RecyclerView.Adapter<SlideRecycleVi
 
             if (position == Slide_size) {
                 AppCompatActivity news_activity = (AppCompatActivity) view.getContext();
-                news_activity.getSupportActionBar().hide();
+                Objects.requireNonNull(news_activity.getSupportActionBar()).hide();
                 news_activity.getSupportFragmentManager()
                         .beginTransaction()
                         .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_right, R.anim.slide_in_right, R.anim.slide_out_right)
@@ -136,13 +134,12 @@ public class SlideRecycleViewAdapter extends RecyclerView.Adapter<SlideRecycleVi
         return Slide_size + 1;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    static class ViewHolder extends RecyclerView.ViewHolder {
 
         CardView parentLayout;
         ImageView img;
         TextView t_news;
         ProgressBar progressBar;
-        //TextView text;
 
         private ViewHolder(View itemView) {
             super(itemView);
@@ -150,7 +147,6 @@ public class SlideRecycleViewAdapter extends RecyclerView.Adapter<SlideRecycleVi
             img = itemView.findViewById(R.id.image_view);
             progressBar = itemView.findViewById(R.id.progressBar);
             t_news = itemView.findViewById(R.id.text_news);
-            //text = itemView.findViewById(R.id.text_view);
         }
     }
 }

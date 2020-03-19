@@ -226,6 +226,8 @@
                             android:text="@string/more_info"
                             android:textColor="@color/all_text_color"
                             android:textSize="20sp"
+                            android:textAlignment="center"
+                            android:layout_centerVertical="true"
                             android:textStyle="bold" />
 
                         <ImageView

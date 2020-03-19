@@ -46,7 +46,6 @@ public class MainActivity extends AppCompatActivity {//implements NavigationView
     private static final int PERMISSION_CODE_2 = 1001;
     private static final int IMAGE_CAPTURE_CODE = 1001;
     private static final int GALLERY_REQUEST_CODE = 1002;
-    private static final int Limit = 4;
     //private static final String URL = "http://192.168.64.2/3D/news.php";
     //private static final String URL = "https://utg-fansub.me/3D/news.php";
     //private static final String URL = "http://192.168.1.43:5000/androidNews";
@@ -196,7 +195,7 @@ public class MainActivity extends AppCompatActivity {//implements NavigationView
 
         cus_client.newCall(request).enqueue(new Callback() {
             @Override
-            public void onFailure(Call call, IOException e) {
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 call.cancel();
                 runOnUiThread(() -> {
                     try {
@@ -209,7 +208,7 @@ public class MainActivity extends AppCompatActivity {//implements NavigationView
             }
 
             @Override
-            public void onResponse(Call call, final Response response) {
+            public void onResponse(@NonNull Call call, @NonNull final Response response) {
                 runOnUiThread(() -> {
                     try {
                         assert response.body() != null;
@@ -258,10 +257,10 @@ public class MainActivity extends AppCompatActivity {//implements NavigationView
 
     private void initRecycleView() {
         Log.d(TAG, "initRecycleView: init RecycleView");
-        layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        layoutManager = new LinearLayoutManager(MainActivity.this, LinearLayoutManager.HORIZONTAL, false);
         recyclerView = findViewById(R.id.recycleview);
         recyclerView.setLayoutManager(layoutManager);
-        adapter = new SlideRecycleViewAdapter(news_date, news_img, news_link, news_title, this, MainActivity.this);
+        adapter = new SlideRecycleViewAdapter(news_date, news_img, news_link, news_title, MainActivity.this);
         recyclerView.setHasFixedSize(false);
         recyclerView.setAdapter(adapter);
         //scrollable();
@@ -275,7 +274,7 @@ public class MainActivity extends AppCompatActivity {//implements NavigationView
         Log.d(TAG, "onNavigationItemSelected: Back stack AR = " + getSupportFragmentManager().getBackStackEntryCount());
         //getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ARFragment(),"ar_model").addToBackStack(null).commit();
         onPause();
-        getSupportActionBar().hide();
+        Objects.requireNonNull(getSupportActionBar()).hide();
     }
 
     public void GalleryClick() {

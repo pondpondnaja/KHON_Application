@@ -10,15 +10,15 @@ import java.util.Calendar;
 public class MyEventDay extends EventDay implements Parcelable {
 
     private String mNote;
-    private int imgre;
+    private int image;
 
-    public MyEventDay(Calendar day, int imageResource, String note) {
+    MyEventDay(Calendar day, int imageResource, String note) {
         super(day, imageResource);
         mNote = note;
-        imgre = imageResource;
+        image = imageResource;
     }
 
-    public String getNote() {
+    String getNote() {
         return mNote;
     }
 
@@ -47,7 +47,7 @@ public class MyEventDay extends EventDay implements Parcelable {
     }
 
     private int getImageResource() {
-        return imgre;
+        return image;
     }
 
     @Override

@@ -12,6 +12,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,21 +27,20 @@ import java.util.ArrayList;
 
 public class Full_NewViewAdapter extends RecyclerView.Adapter<Full_NewViewAdapter.ViewHolder> {
     private static final String TAG = "NewAC";
-    private ArrayList<String> news_date = new ArrayList<>();
-    private ArrayList<String> news_img = new ArrayList<>();
-    private ArrayList<String> news_link = new ArrayList<>();
-    private ArrayList<String> news_title = new ArrayList<>();
-    private Context mcontext;
-    Bundle bundle;
+    private ArrayList<String> news_img;
+    private ArrayList<String> news_link;
+    private ArrayList<String> news_title;
+    private Context mContext;
+    private Bundle bundle;
 
-    public Full_NewViewAdapter(ArrayList<String> news_date, ArrayList<String> news_img, ArrayList<String> news_link, ArrayList<String> news_title, Context mcontext) {
-        this.news_date = news_date;
+    Full_NewViewAdapter(ArrayList<String> news_img, ArrayList<String> news_link, ArrayList<String> news_title, Context mContext) {
         this.news_img = news_img;
         this.news_link = news_link;
         this.news_title = news_title;
-        this.mcontext = mcontext;
+        this.mContext = mContext;
     }
 
+    @NonNull
     @Override
     public Full_NewViewAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.new_list_full,parent,false);
@@ -53,13 +53,13 @@ public class Full_NewViewAdapter extends RecyclerView.Adapter<Full_NewViewAdapte
         holder.new_title.setText(news_title.get(position).trim());
         holder.new_title.setSelected(true);
 
-        Glide.with(mcontext)
+        Glide.with(mContext)
                 .asBitmap()
                 .load(news_img.get(position))
                 .listener(new RequestListener<Bitmap>() {
                     @Override
                     public boolean onLoadFailed(GlideException e, Object model, Target<Bitmap> target, boolean isFirstResource) {
-                        Toast.makeText(mcontext, "Can't load image.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, "Can't load image.", Toast.LENGTH_SHORT).show();
                         Log.d(TAG, "onLoadFailed: Message : " + e);
                         return false;
                     }
@@ -72,29 +72,27 @@ public class Full_NewViewAdapter extends RecyclerView.Adapter<Full_NewViewAdapte
                 })
                 .into(holder.news_full_img);
 
-        holder.new_parent.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.d(TAG, "onClick: click on image : " + news_title.get(position));
-                Toast.makeText(mcontext, news_title.get(position), Toast.LENGTH_SHORT).show();
+        holder.new_parent.setOnClickListener(view -> {
 
-                bundle = new Bundle();
-                bundle.putString("news_link", news_link.get(position));
-                bundle.putString("news_img_link", news_img.get(position));
-                bundle.putString("news_title", news_title.get(position));
-                bundle.putString("from", "list");
+            Log.d(TAG, "onClick: click on image : " + news_title.get(position));
+            Toast.makeText(mContext, news_title.get(position), Toast.LENGTH_SHORT).show();
 
-                Log.d(TAG, "onClick: IMG_Link : " + news_link.get(position));
+            bundle = new Bundle();
+            bundle.putString("news_link", news_link.get(position));
+            bundle.putString("news_img_link", news_img.get(position));
+            bundle.putString("news_title", news_title.get(position));
+            bundle.putString("from", "list");
 
-                NewFragment newFragment = new NewFragment();
-                newFragment.setArguments(bundle);
+            Log.d(TAG, "onClick: IMG_Link : " + news_link.get(position));
 
-                AppCompatActivity activity = (AppCompatActivity) view.getContext();
-                activity.getSupportFragmentManager()
-                        .beginTransaction()
-                        .setCustomAnimations(R.anim.slide_in_right,R.anim.slide_out_right,R.anim.slide_in_right,R.anim.slide_out_right)
-                        .add(R.id.fragment_container, newFragment, "news_full_item").addToBackStack("news_full_item").commit();
-            }
+            NewFragment newFragment = new NewFragment();
+            newFragment.setArguments(bundle);
+
+            AppCompatActivity activity = (AppCompatActivity) view.getContext();
+            activity.getSupportFragmentManager()
+                    .beginTransaction()
+                    .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_right, R.anim.slide_in_right, R.anim.slide_out_right)
+                    .add(R.id.fragment_container, newFragment, "news_full_item").addToBackStack("news_full_item").commit();
         });
     }
 
@@ -103,14 +101,14 @@ public class Full_NewViewAdapter extends RecyclerView.Adapter<Full_NewViewAdapte
         return news_title.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    static class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView new_title;
         CardView new_parent;
         ImageView news_full_img;
         ProgressBar progressBar;
 
-        public ViewHolder(View itemView) {
+        private ViewHolder(View itemView) {
             super(itemView);
             new_title = itemView.findViewById(R.id.new_title_full);
             new_parent = itemView.findViewById(R.id.new_parent);

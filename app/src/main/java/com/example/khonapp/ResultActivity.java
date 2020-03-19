@@ -1,7 +1,6 @@
 package com.example.khonapp;
 
 import android.Manifest;
-import android.content.ContentUris;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -9,9 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.StrictMode;
-import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
@@ -59,9 +56,7 @@ public class ResultActivity extends AppCompatActivity {
     private ArrayList<String> gesture_score = new ArrayList<>();
     private ArrayList<String> gestureDesc = new ArrayList<>();
     private ArrayList<String> out_img = new ArrayList<>();
-    private ArrayList<String> model_id = new ArrayList<>();
 
-    private String img_path, img_real_path, previewPath, out_image;
     private int Bitmap_width, Bitmap_height;
 
     private ImageView imageView;
@@ -91,13 +86,10 @@ public class ResultActivity extends AppCompatActivity {
             imageView.setVisibility(View.VISIBLE);
 
             Bundle extra = getIntent().getExtras();
-            if (extra == null) {
-                img_path = null;
-            } else {
+            String img_path;
+            if (extra != null) {
                 img_path = extra.getString("img_path");
                 img_address = Uri.parse(img_path);
-                //img_real_path = getPath(ResultActivity.this, img_address);
-                //Log.d(TAG, "onCreate: IMG_Add : " + img_real_path);
                 createDetectionBody();
             }
         }
@@ -164,10 +156,10 @@ public class ResultActivity extends AppCompatActivity {
                 .addFormDataPart("app_check", "android")
                 .build();
 
-        postRequest(URL, postBodyImage);
+        postRequest(postBodyImage);
     }
 
-    private void postRequest(String postUrl, RequestBody postBody) {
+    private void postRequest(RequestBody postBody) {
 
         OkHttpClient cus_client = mainActivity.client.newBuilder()
                 .connectTimeout(1, TimeUnit.MINUTES)
@@ -176,13 +168,13 @@ public class ResultActivity extends AppCompatActivity {
 
         AppCompatActivity appCompatActivity = new AppCompatActivity();
         Request request = new Request.Builder()
-                .url(postUrl)
+                .url(ResultActivity.URL)
                 .post(postBody)
                 .build();
 
         cus_client.newCall(request).enqueue(new Callback() {
             @Override
-            public void onFailure(Call call, IOException e) {
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 call.cancel();
                 appCompatActivity.runOnUiThread(() -> {
                     try {
@@ -195,7 +187,7 @@ public class ResultActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onResponse(Call call, final Response response) {
+            public void onResponse(@NonNull Call call, @NonNull final Response response) {
                 appCompatActivity.runOnUiThread(() -> {
                     try {
                         assert response.body() != null;
@@ -234,7 +226,6 @@ public class ResultActivity extends AppCompatActivity {
                 String gesture_scoreJ = obj.getString("gesture_score");
                 String gestureDescJ = obj.getString("desc");
                 String out_imageJ = obj.getString("out_image");
-                String model_idJ = obj.getString("gID");
 
                 name.add(nameJ);
                 desc.add(descJ);
@@ -243,7 +234,6 @@ public class ResultActivity extends AppCompatActivity {
                 gesture_score.add(gesture_scoreJ);
                 gestureDesc.add(gestureDescJ);
                 out_img.add(out_imageJ);
-                model_id.add(model_idJ);
             }
 
             initRecycleView();
@@ -256,7 +246,7 @@ public class ResultActivity extends AppCompatActivity {
     private void initRecycleView() {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext(), RecyclerView.VERTICAL, false);
         recyclerView.setLayoutManager(linearLayoutManager);
-        ResultAdapter adapter = new ResultAdapter(name, desc, score, gesture_name, gesture_score, gestureDesc, out_img, model_id, ResultActivity.this, Bitmap_width, Bitmap_height);
+        ResultAdapter adapter = new ResultAdapter(name, desc, score, gesture_name, gesture_score, gestureDesc, out_img, ResultActivity.this, Bitmap_width, Bitmap_height);
         recyclerView.setAdapter(adapter);
     }
 
@@ -282,104 +272,16 @@ public class ResultActivity extends AppCompatActivity {
         return cursor.getInt(0);
     }
 
-    private static String getPath(final Context context, final Uri uri) {
-        // DocumentProvider
-        if (DocumentsContract.isDocumentUri(context, uri)) {
-            // ExternalStorageProvider
-            if (isExternalStorageDocument(uri)) {
-                final String docId = DocumentsContract.getDocumentId(uri);
-                final String[] split = docId.split(":");
-                final String type = split[0];
-
-                if ("primary".equalsIgnoreCase(type)) {
-                    Log.d(TAG, "getPath: Primary : " + Environment.getExternalStorageDirectory() + "/" + split[1]);
-                    return Environment.getExternalStorageDirectory() + "/" + split[1];
-                }
-
-                // TODO handle non-primary volumes
-            }
-            // DownloadsProvider
-            else if (isDownloadsDocument(uri)) {
-
-                final String id = DocumentsContract.getDocumentId(uri);
-                final Uri contentUri = ContentUris.withAppendedId(
-                        Uri.parse("content://downloads/public_downloads"), Long.valueOf(id));
-
-                Log.d(TAG, "getPath: isDownloadsDocument(uri) : " + getDataColumn(context, contentUri, null, null));
-                return getDataColumn(context, contentUri, null, null);
-            }
-            // MediaProvider
-            else if (isMediaDocument(uri)) {
-                final String docId = DocumentsContract.getDocumentId(uri);
-                final String[] split = docId.split(":");
-                final String type = split[0];
-
-                Uri contentUri = null;
-                if ("image".equals(type)) {
-                    contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-                } else if ("video".equals(type)) {
-                    contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
-                } else if ("audio".equals(type)) {
-                    contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-                }
-
-                final String selection = "_id=?";
-                final String[] selectionArgs = new String[]{
-                        split[1]
-                };
-
-                return getDataColumn(context, contentUri, selection, selectionArgs);
-            }
-        }
-        // MediaStore (and general)
-        else if ("content".equalsIgnoreCase(uri.getScheme())) {
-            return getDataColumn(context, uri, null, null);
-        }
-        // File
-        else if ("file".equalsIgnoreCase(uri.getScheme())) {
-            return uri.getPath();
-        }
-
-        return null;
-    }
-
-    private static String getDataColumn(Context context, Uri uri, String selection, String[] selectionArgs) {
-
-        final String column = "_data";
-        final String[] projection = {column};
-        try (Cursor cursor = context.getContentResolver().query(uri, projection, selection, selectionArgs, null)) {
-            if (cursor != null && cursor.moveToFirst()) {
-                final int column_index = cursor.getColumnIndexOrThrow(column);
-                return cursor.getString(column_index);
-            }
-        }
-        return null;
-    }
-
-    private static boolean isExternalStorageDocument(Uri uri) {
-        return "com.android.externalstorage.documents".equals(uri.getAuthority());
-    }
-
-    private static boolean isDownloadsDocument(Uri uri) {
-        return "com.android.providers.downloads.documents".equals(uri.getAuthority());
-    }
-
-    private static boolean isMediaDocument(Uri uri) {
-        return "com.android.providers.media.documents".equals(uri.getAuthority());
-    }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         //this method is called, when user presses Allow or Deny from Permission Request Popup
-        switch (requestCode) {
-            case PERMISSION_CODE: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    //permission from popup was granted
-                    createDetectionBody();
-                } else {
-                    //permission from popup was denied
-                    Toast.makeText(this, "Permission denied...", Toast.LENGTH_SHORT).show();
-                }
+        if (requestCode == PERMISSION_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                //permission from popup was granted
+                createDetectionBody();
+            } else {
+                //permission from popup was denied
+                Toast.makeText(this, "Permission denied...", Toast.LENGTH_SHORT).show();
             }
         }
     }
