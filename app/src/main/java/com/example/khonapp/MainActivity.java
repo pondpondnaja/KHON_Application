@@ -12,6 +12,7 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,6 +23,7 @@ import androidx.cardview.widget.CardView;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -56,10 +58,12 @@ public class MainActivity extends AppCompatActivity {//implements NavigationView
 
     boolean doubleBackToExitPressedOnce = false;
     boolean isRunning = false;
+    boolean reload = false;
     Uri image_uri;
 
     private FragmentManager fragmentManager;
     private RecyclerView recyclerView;
+    private ScrollView scrollView;
 
     public Toolbar toolbar;
     public ImageView overlay;
@@ -76,6 +80,7 @@ public class MainActivity extends AppCompatActivity {//implements NavigationView
     //Layout
     LinearLayoutManager layoutManager;
     SlideRecycleViewAdapter adapter;
+    SwipeRefreshLayout mSwipeRefreshLayout;
     //Connection
     public OkHttpClient client = new OkHttpClient();
 
@@ -101,6 +106,8 @@ public class MainActivity extends AppCompatActivity {//implements NavigationView
         camera_holder = findViewById(R.id.camera_optional_holder);
         gallery_holder = findViewById(R.id.gallery_holder);
         toolbar_text = toolbar.findViewById(R.id.text_toolbar);
+        mSwipeRefreshLayout = findViewById(R.id.drawer_layout);
+        scrollView = findViewById(R.id.service);
 
         setSupportActionBar(toolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
@@ -113,12 +120,14 @@ public class MainActivity extends AppCompatActivity {//implements NavigationView
         ar_card.setOnClickListener(view -> ARClick());
 
         detect_card.setOnClickListener(view -> {
+            mSwipeRefreshLayout.setEnabled(false);
             optional.setVisibility(View.VISIBLE);
             overlay.setVisibility(View.VISIBLE);
         });
 
         overlay.setOnClickListener(view -> {
             if (optional.getVisibility() == View.VISIBLE) {
+                mSwipeRefreshLayout.setEnabled(true);
                 optional.setVisibility(View.GONE);
                 overlay.setVisibility(View.GONE);
             }
@@ -134,14 +143,50 @@ public class MainActivity extends AppCompatActivity {//implements NavigationView
             emailIntent.setData(Uri.parse(mailto));
             startActivity(emailIntent);
         });
-        //connectServer();
+
+        scrollView.getViewTreeObserver().addOnScrollChangedListener(() -> {
+            if (scrollView != null) {
+                if (scrollView.getScrollY() == 0) {
+                    mSwipeRefreshLayout.setEnabled(true);
+                } else {
+                    mSwipeRefreshLayout.setEnabled(false);
+                }
+            }
+        });
+
+        mSwipeRefreshLayout.setOnRefreshListener(() -> {
+            if (fragmentManager.getBackStackEntryCount() == 0) {
+                Log.d(TAG, "onCreate: Called refresh");
+                reload = true;
+                connectServer();
+            } else {
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+        });
+
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.Main_color_1, R.color.Main_color_2, R.color.Main_color_4);
+
+        mSwipeRefreshLayout.post(() -> {
+            if (mSwipeRefreshLayout != null) {
+                Log.d(TAG, "onCreate: BackStack : " + fragmentManager.getBackStackEntryCount());
+                mSwipeRefreshLayout.setRefreshing(true);
+            }
+            // Fetching data from server
+            reload = true;
+            connectServer();
+        });
+
+        Log.d(TAG, "onCreate: Y : " + scrollView.getScaleY());
     }
 
+    public void disableRefresh() {
+        mSwipeRefreshLayout.setEnabled(false);
+    }
 
     @Override
     protected void onStart() {
         Log.d(TAG, "onStart: AutoScroll Enable");
-        connectServer();
+        //connectServer();
         super.onStart();
     }
 
@@ -169,7 +214,6 @@ public class MainActivity extends AppCompatActivity {//implements NavigationView
     @Override
     protected void onDestroy() {
         Log.d(TAG, "onDestroy: recycle destroy");
-        //handler.removeCallbacks(runtoLeft);
         recyclerView.clearFocus();
         recyclerView.stopScroll();
         recyclerView.clearOnScrollListeners();
@@ -178,9 +222,14 @@ public class MainActivity extends AppCompatActivity {//implements NavigationView
 
     public void connectServer() {
 
-        if (!news_title.isEmpty() || !news_desc.isEmpty() || !news_img.isEmpty() || !news_date.isEmpty() || !news_link.isEmpty()) {
+        if (!news_date.isEmpty() && !reload) {
             return;
         }
+
+        news_date.clear();
+        news_desc.clear();
+        news_img.clear();
+        news_title.clear();
 
         RequestBody postBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
@@ -204,6 +253,7 @@ public class MainActivity extends AppCompatActivity {//implements NavigationView
                     } catch (Exception e1) {
                         e1.printStackTrace();
                     }
+                    mSwipeRefreshLayout.setRefreshing(false);
                 });
             }
 
@@ -217,13 +267,16 @@ public class MainActivity extends AppCompatActivity {//implements NavigationView
                         //setData();
                         if (res.contains("www.herokucdn.com/error-pages/application-error.html")) {
                             Log.d(TAG, "onResponse: Error appear");
+                            reload = false;
                             //setData_Fail();
                         } else {
+                            reload = false;
                             initData(res);
                         }
                     } catch (IOException | JSONException e) {
                         e.printStackTrace();
                     }
+                    mSwipeRefreshLayout.setRefreshing(false);
                 });
             }
         });
@@ -261,12 +314,14 @@ public class MainActivity extends AppCompatActivity {//implements NavigationView
         recyclerView = findViewById(R.id.recycleview);
         recyclerView.setLayoutManager(layoutManager);
         adapter = new SlideRecycleViewAdapter(news_date, news_img, news_link, news_title, MainActivity.this);
+        adapter.notifyDataSetChanged();
         recyclerView.setHasFixedSize(false);
         recyclerView.setAdapter(adapter);
         //scrollable();
     }
 
     public void ARClick() {
+        mSwipeRefreshLayout.setEnabled(false);
         getSupportFragmentManager()
                 .beginTransaction()
                 .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_right, R.anim.slide_in_right, R.anim.slide_out_right)
@@ -289,6 +344,7 @@ public class MainActivity extends AppCompatActivity {//implements NavigationView
             Intent intent = new Intent(Intent.ACTION_PICK);
             intent.setType("image/*");
             String[] mimeTypes = {"image/jpeg", "image/png"};
+            mSwipeRefreshLayout.setEnabled(false);
             intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
             startActivityForResult(intent, GALLERY_REQUEST_CODE);
         }
@@ -308,6 +364,7 @@ public class MainActivity extends AppCompatActivity {//implements NavigationView
     }
 
     private void openCamera() {
+        mSwipeRefreshLayout.setEnabled(false);
         ContentValues values = new ContentValues();
         values.put(MediaStore.Images.Media.TITLE, "New Picture");
         values.put(MediaStore.Images.Media.DESCRIPTION, "From the Camera");
@@ -328,6 +385,7 @@ public class MainActivity extends AppCompatActivity {//implements NavigationView
                     //set the image captured to our ImageView
                     Intent previewIn = new Intent(MainActivity.this, ResultActivity.class);
                     previewIn.putExtra("img_path", image_uri.toString());
+                    mSwipeRefreshLayout.setEnabled(false);
                     startActivity(previewIn);
                     overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                     break;
@@ -337,6 +395,7 @@ public class MainActivity extends AppCompatActivity {//implements NavigationView
                     Intent galleryIn = new Intent(MainActivity.this, ResultActivity.class);
                     assert selectedImage != null;
                     galleryIn.putExtra("img_path", selectedImage.toString());
+                    mSwipeRefreshLayout.setEnabled(false);
                     startActivity(galleryIn);
                     overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                     break;
@@ -346,6 +405,7 @@ public class MainActivity extends AppCompatActivity {//implements NavigationView
     }
 
     public void eventClick(View view) {
+        mSwipeRefreshLayout.setEnabled(false);
         getSupportFragmentManager()
                 .beginTransaction()
                 .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_right, R.anim.slide_in_right, R.anim.slide_out_right)
@@ -364,6 +424,7 @@ public class MainActivity extends AppCompatActivity {//implements NavigationView
 
         if (fragmentManager.getBackStackEntryCount() > 0) {
             fragmentManager.popBackStackImmediate();
+            mSwipeRefreshLayout.setEnabled(true);
         } else if (optional.getVisibility() == View.VISIBLE) {
             optional.setVisibility(View.GONE);
             overlay.setVisibility(View.GONE);

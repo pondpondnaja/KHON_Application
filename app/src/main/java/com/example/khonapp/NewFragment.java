@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,6 +50,7 @@ public class NewFragment extends Fragment {
     private TextView textView, textView_2, text_news_title;
     private CardView cardView;
     private MainActivity mainActivity = new MainActivity();
+    private ScrollView scrollView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -64,7 +66,10 @@ public class NewFragment extends Fragment {
         progressBar_1 = view.findViewById(R.id.progressBar_1);
         progressBar_2 = view.findViewById(R.id.progressBar_2);
         activity = (MainActivity) getActivity();
+        scrollView = view.findViewById(R.id.new_holder);
         news_activity = (AppCompatActivity) view.getContext();
+
+        activity.disableRefresh();
 
         Objects.requireNonNull(news_activity.getSupportActionBar()).hide();
 
@@ -75,6 +80,16 @@ public class NewFragment extends Fragment {
             news_title = bundle.getString("news_title");
             check_where = bundle.getString("from");
         }
+
+        scrollView.getViewTreeObserver().addOnScrollChangedListener(() -> {
+            if (scrollView != null) {
+                if (scrollView.getScrollY() == 0) {
+                    activity.disableRefresh();
+                } else {
+                    activity.disableRefresh();
+                }
+            }
+        });
 
         getNewsData();
         Log.d(TAG, "onCreateView: Link : " + news_title);

@@ -49,6 +49,8 @@ public class Full_NewListFragment extends Fragment {
     private Context context;
     private ProgressBar progressBar;
     private MainActivity mainActivity = new MainActivity();
+    Bundle bundle;
+    private MainActivity activity;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -63,33 +65,40 @@ public class Full_NewListFragment extends Fragment {
         context = view.getContext();
         recyclerView = view.findViewById(R.id.news_fullList_view);
         progressBar = view.findViewById(R.id.progressBar_news);
+        progressBar.setVisibility(View.VISIBLE);
+        activity = (MainActivity) getActivity();
+
+
 
         news_toolbars.setText(getResources().getText(R.string.news_toolbar));
+
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            news_date = bundle.getStringArrayList("news_date");
+            news_img = bundle.getStringArrayList("news_img");
+            news_link = bundle.getStringArrayList("news_link");
+            news_title = bundle.getStringArrayList("news_title");
+            progressBar.setVisibility(View.GONE);
+            initRecycleView();
+        }
+
         return view;
     }
 
     @Override
     public void onStart() {
         Log.d(TAG, "onStart: Initial data");
-        connectServer();
+        //connectServer();
         super.onStart();
     }
 
     @Override
     public void onStop() {
-        news_date.clear();
-        news_img.clear();
-        news_link.clear();
-        news_title.clear();
         super.onStop();
     }
 
     @Override
     public void onDestroy() {
-        news_date.clear();
-        news_img.clear();
-        news_link.clear();
-        news_title.clear();
         super.onDestroy();
     }
 

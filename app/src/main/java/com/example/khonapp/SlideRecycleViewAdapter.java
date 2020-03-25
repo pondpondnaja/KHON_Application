@@ -106,10 +106,19 @@ public class SlideRecycleViewAdapter extends RecyclerView.Adapter<SlideRecycleVi
             if (position == Slide_size) {
                 AppCompatActivity news_activity = (AppCompatActivity) view.getContext();
                 Objects.requireNonNull(news_activity.getSupportActionBar()).hide();
+                bundle = new Bundle();
+                bundle.putStringArrayList("news_date", news_date);
+                bundle.putStringArrayList("news_img", news_img);
+                bundle.putStringArrayList("news_link", news_link);
+                bundle.putStringArrayList("news_title", news_title);
+
+                Full_NewListFragment fullNewListFragment = new Full_NewListFragment();
+                fullNewListFragment.setArguments(bundle);
+
                 news_activity.getSupportFragmentManager()
                         .beginTransaction()
                         .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_right, R.anim.slide_in_right, R.anim.slide_out_right)
-                        .replace(R.id.fragment_container, new Full_NewListFragment(), "full_news").addToBackStack("full_news").commit();
+                        .replace(R.id.fragment_container, fullNewListFragment, "full_news").addToBackStack("full_news").commit();
             } else {
                 bundle = new Bundle();
                 bundle.putString("news_link", news_link.get(position));
