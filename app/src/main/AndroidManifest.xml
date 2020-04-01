@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:dist="http://schemas.android.com/apk/distribution"
-    package="com.example.khonapp">
+    package="com.csbteam.khonapp">
 
     <uses-feature
         android:name="android.hardware.Camera.ar"
@@ -27,11 +27,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ResultActivity" />
-        <activity android:name=".ARActivity" />
-        <activity android:name=".MainActivity" />
+        <activity android:name="com.csbteam.khonapp.ResultActivity" />
+        <activity android:name="com.csbteam.khonapp.ARActivity" />
+        <activity android:name="com.csbteam.khonapp.MainActivity" />
         <activity
-            android:name=".Splashscreen"
+            android:name="com.csbteam.khonapp.Splashscreen"
             android:theme="@style/AppTheme.noActionbar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

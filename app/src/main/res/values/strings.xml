@@ -55,4 +55,5 @@
     <string name="new_img">new_img</string>
     <string name="no_event">No event</string>
     <string name="logo">logo</string>
+    <string name="something_went_wrong_n_please_try_again">Something went wrong\n please try again</string>
 </resources>

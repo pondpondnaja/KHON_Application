@@ -1,4 +1,4 @@
-package com.example.khonapp;
+package com.csbteam.khonapp;
 
 import org.junit.Test;
 

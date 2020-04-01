@@ -1,4 +1,4 @@
-package com.example.khonapp;
+package com.csbteam.khonapp;
 
 import android.Manifest;
 import android.content.ContentValues;
@@ -206,6 +206,7 @@ public class MainActivity extends AppCompatActivity {//implements NavigationView
     @Override
     protected void onPause() {
         Log.d(TAG, "onPause: RecycleView AutoScroll Pause and Remove Callback");
+        scrollView.setScrollY(0);
         //recyclerView.clearFocus();
         //recyclerView.clearOnScrollListeners();
         super.onPause();

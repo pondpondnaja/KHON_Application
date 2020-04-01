@@ -1,4 +1,4 @@
-package com.example.khonapp;
+package com.csbteam.khonapp;
 
 import android.Manifest;
 import android.content.ContentUris;

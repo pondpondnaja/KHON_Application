@@ -6,11 +6,11 @@ android {
     compileSdkVersion 29
     buildToolsVersion "29.0.2"
     defaultConfig {
-        applicationId "com.example.khonapp"
+        applicationId "com.csbteam.khonapp"
         minSdkVersion 26
         targetSdkVersion 29
-        versionCode 1
-        versionName "1.0.7"
+        versionCode 2
+        versionName "2.0.8"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     bundle {
@@ -70,7 +70,7 @@ dependencies {
     implementation 'com.applandeo:material-calendar-view:1.7.0'
     //OkHttp
     implementation 'com.squareup.okhttp3:okhttp:3.12.1'
-    //Jsoup
+    //J-soup
     implementation 'org.jsoup:jsoup:1.13.1'
 }
 

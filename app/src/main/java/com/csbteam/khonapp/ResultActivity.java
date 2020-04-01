@@ -1,4 +1,4 @@
-package com.example.khonapp;
+package com.csbteam.khonapp;
 
 import android.Manifest;
 import android.content.Context;
@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -62,6 +63,7 @@ public class ResultActivity extends AppCompatActivity {
     private ImageView imageView;
     private ProgressBar progressBar;
     private RecyclerView recyclerView;
+    private CardView error;
 
     Uri img_address;
     MainActivity mainActivity = new MainActivity();
@@ -77,6 +79,7 @@ public class ResultActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.detect_result);
         progressBar = findViewById(R.id.progressBar);
         imageView = findViewById(R.id.img_overlay_result);
+        error = findViewById(R.id.error_container);
 
         requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 2);
 
@@ -84,6 +87,7 @@ public class ResultActivity extends AppCompatActivity {
             progressBar.setVisibility(View.VISIBLE);
             progressBar.bringToFront();
             imageView.setVisibility(View.VISIBLE);
+            error.setVisibility(View.GONE);
 
             Bundle extra = getIntent().getExtras();
             String img_path;
@@ -179,7 +183,7 @@ public class ResultActivity extends AppCompatActivity {
                 appCompatActivity.runOnUiThread(() -> {
                     try {
                         Toast.makeText(getApplicationContext(), "Fail to connect server", Toast.LENGTH_LONG).show();
-
+                        error.setVisibility(View.VISIBLE);
                     } catch (Exception e1) {
                         e1.printStackTrace();
                     }
@@ -252,10 +256,8 @@ public class ResultActivity extends AppCompatActivity {
 
     public void setData_Fail() {
         progressBar.setVisibility(View.GONE);
-        //progressBar_cha.setVisibility(View.GONE);
-        //progressBar_gesture.setVisibility(View.GONE);
-
-        //mTItle.setText("Memory leak please contact supporter.");
+        imageView.setVisibility(View.GONE);
+        error.setVisibility(View.VISIBLE);
     }
 
     public static int getOrientation(Context context, Uri photoUri) {
