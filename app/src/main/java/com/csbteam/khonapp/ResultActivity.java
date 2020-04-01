@@ -199,7 +199,7 @@ public class ResultActivity extends AppCompatActivity {
                         Log.d(TAG, "onResponse: " + res.trim());
                         Log.d(TAG, "onResponse: PATH : " + img_address);
                         //setData();
-                        if (res.contains("www.herokucdn.com/error-pages/application-error.html") || res.contains("500")) {
+                        if (res.contains("www.herokucdn.com/error-pages/application-error.html") || res.contains("500") || res.equals("[]")) {
                             Log.d(TAG, "onResponse: Error appear");
                             setData_Fail();
                         } else {

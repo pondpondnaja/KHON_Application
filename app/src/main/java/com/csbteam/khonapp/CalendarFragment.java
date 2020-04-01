@@ -53,6 +53,7 @@ public class CalendarFragment extends Fragment {
     private static final String URL = "http://khon.itar.site/show";
 
     private ArrayList<EventDay> events = new ArrayList<>();
+
     private ArrayList<String> year_month_day = new ArrayList<>();
     private ArrayList<String> location = new ArrayList<>();
     private ArrayList<String> title = new ArrayList<>();
@@ -83,6 +84,7 @@ public class CalendarFragment extends Fragment {
         MainActivity activity = (MainActivity) getActivity();
         assert activity != null;
         activity.setToolbarTitle("Even Calendar");
+
 
         calendarView = view.findViewById(R.id.calendarView);
         text_title = view.findViewById(R.id.event_title);
@@ -131,7 +133,7 @@ public class CalendarFragment extends Fragment {
                             if (mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_COLLAPSED || mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_HIDDEN) {
                                 mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                             }
-                            text_title.setText(((MyEventDay) eventDay).getNote());
+                            text_title.setText(title.get(i));
                             text_description.setText(description.get(i));
                             text_location.setText(location.get(i));
                             event_list_location = String.valueOf(i);
@@ -142,7 +144,7 @@ public class CalendarFragment extends Fragment {
                             }
                             match = true;
                             Log.d(TAG, "onDayClick: Event Day position : " + i);
-                            Log.d(TAG, "onDayClick: Event Description  : " + ((MyEventDay) eventDay).getNote());
+                            Log.d(TAG, "onDayClick: Event Description  : " + title.get(i));
                             break;
                         }
                     }
@@ -384,6 +386,7 @@ public class CalendarFragment extends Fragment {
     }
 
     private void initEvent() {
+
         for (int i = 0; i < year_month_day.size(); i++) {
             String[] item = year_month_day.get(i).split(" ");
             years.add(String.valueOf(Integer.parseInt(item[2]) - 543));
@@ -392,11 +395,17 @@ public class CalendarFragment extends Fragment {
             days.add(String.valueOf(change));
             Log.d(TAG, "initEvent: Data : " + days + " Month : " + months + " Year : " + years);
         }
+
         for (int j = 0; j < years.size(); j++) {
+            int year = Integer.parseInt(years.get(j));
+            int month = Integer.parseInt(months.get(j));
+            int day = Integer.parseInt(days.get(j));
             Calendar calendar = Calendar.getInstance();
-            calendar.set(Integer.parseInt(years.get(j)), Integer.parseInt(months.get(j)), Integer.parseInt(days.get(j)));
-            events.add(new MyEventDay(calendar, R.drawable.calendar_dot, title.get(j)));
+            calendar.set(year, month, day);
+            events.add(new EventDay(calendar, R.drawable.calendar_dot));
+            Log.d(TAG, "initEvent: Add event : " + j);
         }
+
         calendarView.setEvents(events);
 
         boolean match = false;

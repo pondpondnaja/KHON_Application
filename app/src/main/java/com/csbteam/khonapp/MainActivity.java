@@ -144,9 +144,18 @@ public class MainActivity extends AppCompatActivity {//implements NavigationView
             startActivity(emailIntent);
         });
 
+        os_2.setOnClickListener(view -> {
+            mSwipeRefreshLayout.setEnabled(false);
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_right, R.anim.slide_in_right, R.anim.slide_out_right)
+                    .replace(R.id.fragment_container, new CalendarFragment(), "event").addToBackStack("event").commit();
+            onPause();
+        });
+
         scrollView.getViewTreeObserver().addOnScrollChangedListener(() -> {
             if (scrollView != null) {
-                if (scrollView.getScrollY() == 0) {
+                if (scrollView.getScrollY() == 0 && fragmentManager.getBackStackEntryCount() == 0) {
                     mSwipeRefreshLayout.setEnabled(true);
                 } else {
                     mSwipeRefreshLayout.setEnabled(false);
@@ -181,6 +190,7 @@ public class MainActivity extends AppCompatActivity {//implements NavigationView
 
     public void disableRefresh() {
         mSwipeRefreshLayout.setEnabled(false);
+        mSwipeRefreshLayout.setRefreshing(false);
     }
 
     @Override
@@ -403,15 +413,6 @@ public class MainActivity extends AppCompatActivity {//implements NavigationView
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    public void eventClick(View view) {
-        mSwipeRefreshLayout.setEnabled(false);
-        getSupportFragmentManager()
-                .beginTransaction()
-                .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_right, R.anim.slide_in_right, R.anim.slide_out_right)
-                .replace(R.id.fragment_container, new CalendarFragment(), "event").addToBackStack("event").commit();
-        onPause();
     }
 
     public void setToolbarTitle(String text) {
