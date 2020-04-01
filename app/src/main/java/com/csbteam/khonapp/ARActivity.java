@@ -263,7 +263,7 @@ public class ARActivity extends AppCompatActivity implements View.OnClickListene
                     }
                 }, error -> {
             Log.d("onError", error.toString());
-            Toast.makeText(ARActivity.this, "เกิดข้อผิดพลาดโปรดลองอีกครั้ง", Toast.LENGTH_SHORT).show();
+            Toast.makeText(ARActivity.this, "Something went wrong", Toast.LENGTH_SHORT).show();
         });
         requestQueue.add(request);
     }
@@ -273,7 +273,7 @@ public class ARActivity extends AppCompatActivity implements View.OnClickListene
         isModelPlace = true;
 
         Log.d(TAG, "onCreate: Place Model From " + ASSET_3D);
-        Toast.makeText(getApplicationContext(), "Fetching Model From : " + FolderName, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(), "Fetching Model From : " + FolderName, Toast.LENGTH_SHORT).show();
         ModelRenderable
                 .builder()
                 .setSource(ARActivity.this, RenderableSource

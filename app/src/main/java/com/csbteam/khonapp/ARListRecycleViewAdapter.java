@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -48,7 +47,7 @@ public class ARListRecycleViewAdapter extends RecyclerView.Adapter<ARListRecycle
 
         holder.parentLayout.setOnClickListener(view -> {
             Log.d(TAG, "onClick: clicked on " + ARName.get(position) + " in folder " + FolderName.get(position));
-            Toast.makeText(context, ARName.get(position) + " from folder : " + FolderName.get(position), Toast.LENGTH_SHORT).show();
+            //Toast.makeText(context, ARName.get(position) + " from folder : " + FolderName.get(position), Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(context, ARActivity.class);
             intent.putExtra("FolderName", FolderName.get(position));
             intent.putExtra("gesture_name", ARName.get(position));
